@@ -1,3 +1,15 @@
+import { useStore } from '@tanstack/react-form'
+import {
+  CalendarIcon,
+  ChevronDown,
+  Loader2,
+  LockIcon,
+  MailIcon,
+  X,
+} from 'lucide-react'
+import { format } from 'date-fns'
+import { Outlet } from '@tanstack/react-router'
+import { RadioGroup, RadioGroupItem } from './ui/radio-group'
 import { Button } from '@/components/ui/button'
 import { ButtonGroup } from '@/components/ui/button-group'
 import {
@@ -17,21 +29,23 @@ import {
   InputGroupInput,
   InputGroupText,
 } from '@/components/ui/input-group'
-import { useFieldContext, useFormContext } from '@/hooks/personally.form-context'
-import { useStore } from '@tanstack/react-form'
-import { CalendarIcon, ChevronDown, Loader2, LockIcon, MailIcon, X } from 'lucide-react'
+import {
+  useFieldContext,
+  useFormContext,
+} from '@/hooks/personally.form-context'
 import { Textarea } from '@/components/ui/textarea'
 import * as ShadcnSelect from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
 import { Switch as ShadcnSwitch } from '@/components/ui/switch'
 import { Slider as ShadcnSlider } from '@/components/ui/slider'
 import { Checkbox } from '@/components/ui/checkbox'
-import { RadioGroup, RadioGroupItem } from './ui/radio-group'
 import { cn } from '@/lib/utils'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { format } from 'date-fns';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 import { Calendar } from '@/components/ui/calendar'
-import { Outlet } from '@tanstack/react-router'
 
 export function SubmitButton({
   label,
@@ -123,9 +137,7 @@ export function TextField({
           className={className}
         />
         {placeholderIcon && (
-          <InputGroupAddon>
-            {placeholderIcon}
-          </InputGroupAddon>
+          <InputGroupAddon>{placeholderIcon}</InputGroupAddon>
         )}
       </InputGroup>
       {field.state.meta.isTouched && <FieldError errors={errors} />}
@@ -149,14 +161,14 @@ export function NumberField({
 
   return (
     <Field>
-
-      {label && <FieldLabel
-        htmlFor={label}
-        className="text-base font-semibold flex items-center gap-2"
-      >
-        {label} {required && <span className="text-destructive">*</span>}
-      </FieldLabel>
-      }
+      {label && (
+        <FieldLabel
+          htmlFor={label}
+          className="text-base font-semibold flex items-center gap-2"
+        >
+          {label} {required && <span className="text-destructive">*</span>}
+        </FieldLabel>
+      )}
       <InputGroup>
         <InputGroupInput
           value={field.state.value}
@@ -191,7 +203,10 @@ export function EmailField({
   return (
     <Field>
       {label && (
-        <FieldLabel htmlFor={label} className="text-base font-semibold flex items-center gap-2">
+        <FieldLabel
+          htmlFor={label}
+          className="text-base font-semibold flex items-center gap-2"
+        >
           {label}
         </FieldLabel>
       )}
@@ -230,7 +245,10 @@ export function PasswordField({
   return (
     <Field>
       {label && (
-        <FieldLabel htmlFor={label} className="text-base font-semibold flex items-center gap-2">
+        <FieldLabel
+          htmlFor={label}
+          className="text-base font-semibold flex items-center gap-2"
+        >
           {label}
         </FieldLabel>
       )}
@@ -269,7 +287,10 @@ export function DateField({
   return (
     <Field>
       {label && (
-        <FieldLabel htmlFor={label} className="text-base font-semibold flex items-center gap-2">
+        <FieldLabel
+          htmlFor={label}
+          className="text-base font-semibold flex items-center gap-2"
+        >
           {label}
         </FieldLabel>
       )}
@@ -279,10 +300,14 @@ export function DateField({
             <Button
               type="button"
               variant="outline"
-              className={`w-full ${className}`}
+              className={`w-full justify-start text-left font-normal ${className}`}
             >
               <CalendarIcon />
-              {field.state.value ? format(new Date(field.state.value), 'dd MMM, yyyy') : <span>{placeholder}</span>}
+              {field.state.value ? (
+                format(new Date(field.state.value), 'PPP')
+              ) : (
+                <span>{placeholder}</span>
+              )}
             </Button>
             {field.state.value && (
               <Button
@@ -291,11 +316,11 @@ export function DateField({
                 size="sm"
                 className="absolute top-1/2 -end-0 -translate-y-1/2"
                 onClick={(e) => {
-                  e.preventDefault();
-                  field.handleChange('');
+                  e.preventDefault()
+                  field.handleChange('')
                 }}
               >
-                <X />
+                <X className="w-3 h-3" />
               </Button>
             )}
           </div>
@@ -303,7 +328,9 @@ export function DateField({
         <PopoverContent className="w-auto p-0" align="center" side="bottom">
           <Calendar
             mode="single"
-            selected={field.state.value ? new Date(field.state.value) : undefined}
+            selected={
+              field.state.value ? new Date(field.state.value) : undefined
+            }
             onSelect={(date) => field.handleChange(date?.toISOString() || '')}
             autoFocus
           />
@@ -313,7 +340,6 @@ export function DateField({
     </Field>
   )
 }
-
 
 export function TextArea({
   label,
@@ -331,16 +357,17 @@ export function TextArea({
 
   return (
     <Field>
-      {/*<div className="flex items-center gap-2 mb-2">
+      {/* <div className="flex items-center gap-2 mb-2">
         <ChevronDown className="size-4 text-indigo-500" />*/}
-      {label && <FieldLabel
-        htmlFor={label}
-        className="text-base font-semibold flex items-center gap-2"
-      >
-        {label}
-      </FieldLabel>
-      }
-      {/*</div>*/}
+      {label && (
+        <FieldLabel
+          htmlFor={label}
+          className="text-base font-semibold flex items-center gap-2"
+        >
+          {label}
+        </FieldLabel>
+      )}
+      {/* </div>*/}
       <Textarea
         id={label}
         value={field.state.value}
@@ -370,7 +397,10 @@ export function SelectField({
 
   return (
     <Field>
-      <FieldLabel htmlFor={label} className="text-base font-semibold flex items-center gap-2">
+      <FieldLabel
+        htmlFor={label}
+        className="text-base font-semibold flex items-center gap-2"
+      >
         {label}
       </FieldLabel>
       <ShadcnSelect.Select
@@ -410,7 +440,10 @@ export function SwitchField({
     <Field>
       <div className="flex items-center justify-between space-x-2">
         <div className="flex-1">
-          <FieldLabel htmlFor={label} className="text-base font-semibold flex items-center gap-2">
+          <FieldLabel
+            htmlFor={label}
+            className="text-base font-semibold flex items-center gap-2"
+          >
             {label}
           </FieldLabel>
           {description && (
@@ -448,7 +481,10 @@ export function SliderField({
     <Field>
       <div className="space-y-2">
         <div className="flex justify-between">
-          <FieldLabel htmlFor={label} className="text-base font-semibold flex items-center gap-2">
+          <FieldLabel
+            htmlFor={label}
+            className="text-base font-semibold flex items-center gap-2"
+          >
             {label}
           </FieldLabel>
           <span className="text-sm text-zinc-600 dark:text-zinc-400">
@@ -518,7 +554,9 @@ export function RadioGroupField({
 
   return (
     <Field>
-      <FieldLabel className="text-base font-semibold flex items-center gap-2">{label}</FieldLabel>
+      <FieldLabel className="text-base font-semibold flex items-center gap-2">
+        {label}
+      </FieldLabel>
       <div className="space-y-2">
         {options.map((option) => (
           <div
@@ -566,7 +604,7 @@ export function ChoiceCardField({
 }: {
   label?: string
   fieldDescription?: string
-  alignment?: 'horizontal' | 'vertical',
+  alignment?: 'horizontal' | 'vertical'
   options: Array<{
     label: string
     value: string
@@ -582,17 +620,24 @@ export function ChoiceCardField({
     <div className="w-full">
       <FieldGroup>
         <FieldSet>
-          {label && <FieldLabel htmlFor={label} className="text-base font-semibold flex items-center gap-2">
-            {label}
-          </FieldLabel>}
-          {fieldDescription && <FieldDescription>{fieldDescription}</FieldDescription>}
+          {label && (
+            <FieldLabel
+              htmlFor={label}
+              className="text-base font-semibold flex items-center gap-2"
+            >
+              {label}
+            </FieldLabel>
+          )}
+          {fieldDescription && (
+            <FieldDescription>{fieldDescription}</FieldDescription>
+          )}
           <RadioGroup
             value={field.state.value}
             onValueChange={(value) => field.handleChange(value)}
             className={cn(
               alignment === 'horizontal'
                 ? 'grid grid-cols-1 sm:grid-cols-2 gap-4'
-                : 'flex flex-col gap-2'
+                : 'flex flex-col gap-2',
             )}
           >
             {options.map((option) => {
@@ -604,7 +649,6 @@ export function ChoiceCardField({
                   className={
                     isSelected ? option.backgroundColor : 'hover:bg-indigo-50'
                   }
-
                 >
                   <Field
                     orientation="horizontal"
@@ -612,7 +656,7 @@ export function ChoiceCardField({
                       'rounded-lg transition-all cursor-pointer border',
                       isSelected
                         ? option?.backgroundColor || 'bg-indigo-50 shadow-sm'
-                        : ' dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700'
+                        : ' dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700',
                     )}
                   >
                     <FieldContent>
@@ -621,7 +665,9 @@ export function ChoiceCardField({
                         <FieldTitle>{option.label}</FieldTitle>
                       </div>
                       {option.description && (
-                        <FieldDescription>{option.description}</FieldDescription>
+                        <FieldDescription>
+                          {option.description}
+                        </FieldDescription>
                       )}
                     </FieldContent>
                     <RadioGroupItem

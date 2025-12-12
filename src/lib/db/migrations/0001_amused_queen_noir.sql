@@ -1,11 +1,43 @@
-CREATE TYPE "public"."expense_split_type" AS ENUM('equal', 'exact', 'percentage', 'shares');--> statement-breakpoint
-CREATE TYPE "public"."invitation_status" AS ENUM('pending', 'accepted', 'declined', 'expired');--> statement-breakpoint
-CREATE TYPE "public"."loan_status" AS ENUM('active', 'paid', 'overdue', 'partially_paid');--> statement-breakpoint
-CREATE TYPE "public"."loan_type" AS ENUM('borrowed', 'lent');--> statement-breakpoint
-CREATE TYPE "public"."member_role" AS ENUM('owner', 'admin', 'member', 'viewer');--> statement-breakpoint
-CREATE TYPE "public"."payment_method" AS ENUM('cash', 'zelle');--> statement-breakpoint
-CREATE TYPE "public"."settlement_status" AS ENUM('pending', 'paid', 'verified');--> statement-breakpoint
-CREATE TYPE "public"."visibility" AS ENUM('private', 'shared', 'public');--> statement-breakpoint
+DO $$ BEGIN
+ CREATE TYPE "public"."expense_split_type" AS ENUM('equal', 'exact', 'percentage', 'shares');
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;--> statement-breakpoint
+DO $$ BEGIN
+ CREATE TYPE "public"."invitation_status" AS ENUM('pending', 'accepted', 'declined', 'expired');
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;--> statement-breakpoint
+DO $$ BEGIN
+ CREATE TYPE "public"."loan_status" AS ENUM('active', 'paid', 'overdue', 'partially_paid');
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;--> statement-breakpoint
+DO $$ BEGIN
+ CREATE TYPE "public"."loan_type" AS ENUM('borrowed', 'lent');
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;--> statement-breakpoint
+DO $$ BEGIN
+ CREATE TYPE "public"."member_role" AS ENUM('owner', 'admin', 'member', 'viewer');
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;--> statement-breakpoint
+DO $$ BEGIN
+ CREATE TYPE "public"."payment_method" AS ENUM('cash', 'zelle');
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;--> statement-breakpoint
+DO $$ BEGIN
+ CREATE TYPE "public"."settlement_status" AS ENUM('pending', 'paid', 'verified');
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;--> statement-breakpoint
+DO $$ BEGIN
+ CREATE TYPE "public"."visibility" AS ENUM('private', 'shared', 'public');
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;--> statement-breakpoint
 CREATE TABLE "project" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" text NOT NULL,

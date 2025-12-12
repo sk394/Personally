@@ -1,26 +1,21 @@
 import * as React from 'react'
 import { motion } from 'motion/react'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-
-  DialogFooter,
-} from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-import {
-  Loader2,
-  Sparkles,
-  CheckCircle2,
-} from 'lucide-react'
-import { useTRPC } from '@/integrations/trpc/react'
+import { CheckCircle2, Loader2, Sparkles } from 'lucide-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { z } from 'zod'
+import { useTRPC } from '@/integrations/trpc/react'
+import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { useAppForm } from '@/hooks/personally.form'
-import { InvitationInput, projectOpts } from "@/features/shared-form"
+import { InvitationInput, projectOpts } from '@/features/shared-form'
 import { ProjectForm } from '@/features/project/project-form'
 
 interface CreateNewProjectDialogProps {

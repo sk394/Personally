@@ -1,0 +1,339 @@
+import z from 'zod'
+import { useEffect, useState } from 'react'
+import { motion } from 'motion/react'
+import { CheckCircle2, DollarSign, Loader2, Receipt, Users } from 'lucide-react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
+import { useAppForm } from '@/hooks/personally.form'
+import { Button } from '@/components/ui/button'
+import { useTRPC } from '@/integrations/trpc/react'
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog-old'
+import { InputGroupAddon } from '@/components/ui/input-group'
+
+interface CreateExpenseDialogProps {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  projectId: string
+  currentUserId: string
+}
+
+const expenseSchema = z.object({
+  description: z.string().min(1, 'Description is required'),
+  category: z.string().min(1, 'Category is required'),
+  amount: z.number().gt(0, 'Amount must be greater than 0'),
+  date: z.string(),
+  paidBy: z.string().min(1, 'Payer is required'),
+  splitType: z.enum(['equal', 'percentage', 'shares', 'exact']),
+  notes: z.string().optional(),
+  receiptUrl: z.string().optional(),
+  involvedUsers: z
+    .array(z.string())
+    .min(1, 'At least one person must be involved'),
+})
+
+type ExpenseFormValues = z.infer<typeof expenseSchema>
+
+export function CreateExpenseDialog({
+  open,
+  onOpenChange,
+  projectId,
+  currentUserId,
+}: CreateExpenseDialogProps) {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+  const [isComplete, setIsComplete] = useState(false)
+
+  // Fetch project members
+  const { data: members } = useQuery(
+    trpc.project.getMembers.queryOptions({ projectId }),
+  )
+
+  const form = useAppForm({
+    defaultValues: {
+      description: 'Expenses',
+      category: 'Grocery',
+      amount: 0,
+      date: new Date().toISOString(),
+      paidBy: currentUserId,
+      splitType: 'equal',
+      notes: '',
+      receiptUrl: '',
+      involvedUsers: [],
+    } as ExpenseFormValues,
+    validators: {
+      onSubmit: expenseSchema,
+    },
+    onSubmit: async ({ value }) => {
+      // Prepare splits
+      const splits = value.involvedUsers.map((userId) => ({
+        userId,
+        // Amount calculation handled by backend for 'equal'
+      }))
+
+      await createExpenseMutation.mutateAsync({
+        projectId,
+        description: value.description,
+        amount: Math.round(value.amount * 100), // cents
+        date: new Date(value.date),
+        paidBy: value.paidBy,
+        splitType: value.splitType,
+        category: value.category,
+        notes: value.notes,
+        receiptUrl: value.receiptUrl,
+        splits,
+      })
+    },
+  })
+
+  // Auto-select all members initially when members are loaded
+  useEffect(() => {
+    if (members && form.state.values.involvedUsers.length === 0) {
+      const allMemberIds = members.map((m) => m.userId)
+      // Also include current user if not in members list (e.g. owner)
+      // But getMembers usually returns all including owner if they are in project_member
+      // If owner is not in project_member, we might need to handle that.
+      // Assuming getMembers returns everyone.
+      form.setFieldValue('involvedUsers', allMemberIds)
+    }
+  }, [members])
+
+  const createExpenseMutation = useMutation(
+    trpc.splitwise.createExpense.mutationOptions({
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: [['splitwise', 'getExpenses']],
+        })
+        queryClient.invalidateQueries({
+          queryKey: [['splitwise', 'getBalances']],
+        })
+        setIsComplete(true)
+        setTimeout(() => {
+          onOpenChange(false)
+          resetForm()
+        }, 2000)
+      },
+      onError: (error: any) => {
+        toast.error(error.message || 'Failed to create expense')
+      },
+    }),
+  )
+
+  const resetForm = () => {
+    form.reset()
+    setIsComplete(false)
+  }
+
+  const handleClose = () => {
+    if (!createExpenseMutation.isPending && !isComplete) {
+      onOpenChange(false)
+      setTimeout(resetForm, 300)
+    }
+  }
+
+  const toggleUser = (userId: string) => {
+    const current = form.state.values.involvedUsers
+    if (current.includes(userId)) {
+      form.setFieldValue(
+        'involvedUsers',
+        current.filter((id) => id !== userId),
+      )
+    } else {
+      form.setFieldValue('involvedUsers', [...current, userId])
+    }
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent
+        closeButton={!isComplete}
+        onClose={handleClose}
+        className="max-w-lg max-h-[95vh]"
+      >
+        {!isComplete ? (
+          <>
+            <DialogHeader>
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex items-center gap-2"
+              >
+                <Receipt className="size-6 text-indigo-500" />
+                <DialogTitle>Add Expense</DialogTitle>
+              </motion.div>
+              <DialogDescription>
+                Add a new expense to split with the group.
+              </DialogDescription>
+            </DialogHeader>
+
+            <DialogBody className="space-y-6">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  form.handleSubmit()
+                }}
+                className="space-y-4"
+              >
+                <form.AppField
+                  name="category"
+                >
+                  {(field) => (
+                    <>
+                      <field.SelectField
+                        label="Category"
+                        placeholder="Select category"
+                        values={[
+                          { value: 'Grocery', label: 'Grocery' },
+                          { value: 'Rent', label: 'Rent' },
+                          { value: 'Utilities', label: 'Utilities' },
+                          { value: 'Other', label: 'Other' },
+                        ]}
+                      />
+                    </>
+                  )}
+                </form.AppField>
+
+                <form.AppField
+                  name="description"
+                >
+                  {(field) => (
+                    <>
+                      <field.PersonallyTextField
+                        label="Description"
+                        placeholder="Enter description"
+                      />
+                    </>
+                  )}
+                </form.AppField>
+
+                <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
+                  <form.AppField
+                    name="amount"
+                  >
+                    {(field) => (
+
+                      <field.NumberField
+                        label="Amount"
+                        placeholder="Enter amount"
+                        required
+                        children={
+                          <InputGroupAddon>
+                            <DollarSign className="size-4" />
+                          </InputGroupAddon>
+                        }
+                      />
+
+                    )}
+                  </form.AppField>
+                  <form.AppField
+                    name="date"
+                  >
+                    {(field) => (
+                      <field.DateField
+                        label="Date"
+                        placeholder="Select date"
+                        className="col-span-2"
+                      />
+                    )}
+                  </form.AppField>
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
+                  <form.AppField
+                    name="paidBy"
+                  >
+                    {(field) => (
+                      <field.SelectField
+                        label="Paid By"
+                        placeholder="Select payer"
+                        values={
+                          members?.map((member) => ({
+                            value: member.userId,
+                            label: member.user.name || 'Unknown',
+                          })) ?? []
+                        }
+
+                      />
+
+                    )}
+                  </form.AppField>
+                  <form.AppField
+                    name="splitType"
+                  >
+                    {(field) => (
+                      <field.SelectField
+                        label="Split Type"
+                        placeholder="Select split type"
+                        values={[
+                          { value: 'equal', label: 'Equal' },
+                          { value: 'exact', label: 'Exact' },
+                          { value: 'percent', label: 'Percent' },
+                          { value: 'shares', label: 'Shares' },
+                        ]}
+                      />
+                    )}
+                  </form.AppField>
+                </div>
+              </form>
+            </DialogBody>
+
+            <DialogFooter className="border-t border-zinc-200 dark:border-zinc-800 pt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleClose}
+                disabled={createExpenseMutation.isPending}
+              >
+                Cancel
+              </Button>
+
+              <Button
+                onClick={form.handleSubmit}
+                disabled={
+                  form.state.isSubmitting || createExpenseMutation.isPending
+                }
+              >
+                {createExpenseMutation.isPending ? (
+                  <>
+                    <Loader2 className="size-4 animate-spin mr-2" />
+                    Adding...
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle2 className="size-4 mr-2" />
+                    Save Expense
+                  </>
+                )}
+              </Button>
+            </DialogFooter>
+          </>
+        ) : (
+          <DialogBody className="py-12">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="flex flex-col items-center justify-center text-center"
+            >
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.2, type: 'spring', bounce: 0.5 }}
+              >
+                <CheckCircle2 className="size-16 text-green-500 mb-4" />
+              </motion.div>
+              <h3 className="text-xl font-semibold mb-2">Expense Added!</h3>
+            </motion.div>
+          </DialogBody>
+        )}
+      </DialogContent>
+    </Dialog >
+  )
+}

@@ -1,3 +1,18 @@
+import { useQuery } from '@tanstack/react-query'
+import { createFileRoute, redirect } from '@tanstack/react-router'
+import { createServerFn } from '@tanstack/react-start'
+import { getRequest } from '@tanstack/react-start/server'
+import {
+  Calendar,
+  DollarSign,
+  Loader2,
+  Plus,
+  TrendingDown,
+  TrendingUp,
+  User,
+} from 'lucide-react'
+import { useState } from 'react'
+import type { Loan } from '@/lib/db/schema'
 import PersonallyLogo from '@/components/logo'
 import { Button } from '@/components/ui/button'
 import {
@@ -12,64 +27,53 @@ import { CreateNewLoanDialog } from '@/features/loan/create-new-loan-dialog'
 import { GetStatusBadge } from '@/features/loan/status-badge'
 import { useTRPC } from '@/integrations/trpc/react'
 import { auth } from '@/lib/auth/auth'
-import { getUserProjectIdByCategory } from '@/lib/auth/user-project-setup'
-import { Loan } from '@/lib/db/schema'
 import { formatCurrency, formatDate } from '@/lib/utils'
-import { useQuery } from '@tanstack/react-query'
-import { createFileRoute } from '@tanstack/react-router'
-import { getRequest } from '@tanstack/react-start/server'
-import {
-  Calendar,
-  DollarSign,
-  Loader2,
-  Plus,
-  TrendingDown,
-  TrendingUp,
-  User,
-} from 'lucide-react'
-import { useState } from 'react'
+
+
+const authStateFn = createServerFn({ method: 'GET' }).handler(async ({}) => {
+  const session = await auth.api.getSession({ headers: getRequest().headers })
+  if (!session) {
+    throw redirect({
+      to: '/signin',
+    })
+  }
+
+  return { userId: session.user?.id }
+})
 
 export const Route = createFileRoute('/dashboard/loan/')({
   component: RouteComponent,
+  beforeLoad: async () => await authStateFn(),
   loader: async ({ context }) => {
-    // "use server";
-    // const user = await auth.api.getSession({
-    //   headers: getRequest().headers
-    // });
-    // if (!user) {
-    //   throw new Error("Unauthorized");
-    // }
-    const user = await context.queryClient.fetchQuery(
-      context.trpc.user.getSession.queryOptions(),
-    )
-
-    if (!user) {
-      throw new Error('Unauthorized')
-    }
-
     await context.queryClient.prefetchQuery(
       context.trpc.loan.getAll.queryOptions(),
     )
 
-    const projectId = await getUserProjectIdByCategory(
-      user.session.userId!,
-      'loan',
+    await context.queryClient.prefetchQuery(
+      context.trpc.project.getByType.queryOptions({ projectType: 'loan' }),
     )
-    return { projectId: projectId! }
+
+    return { userId: context.userId }
   },
 })
 
 function RouteComponent() {
-  const { projectId } = Route.useLoaderData()
+  const { userId } = Route.useLoaderData()
   const trpc = useTRPC()
   const [loanDialogOpen, setLoanDialogOpen] = useState(false)
 
   // live query for all loans
-  const {
-    data: allLoans,
-    isLoading,
-    refetch,
-  } = useQuery(trpc.loan.getAll.queryOptions())
+  const { data: allLoans, isLoading } = useQuery(
+    trpc.loan.getAll.queryOptions(),
+  )
+
+  const { data: loanProjects } = useQuery(
+    trpc.project.getByType.queryOptions({ projectType: 'loan' }),
+  )
+
+  // Get the first loan project or null if none exists
+  const defaultLoanProject =
+    loanProjects?.owned?.[0] || loanProjects?.member?.[0] || null
 
   // live query for borrowed loans
   const borrowedLoans =
@@ -96,7 +100,7 @@ function RouteComponent() {
         <div>
           <h1 className="text-3xl font-bold mb-2">Loans</h1>
           <p className="text-muted-foreground">
-            Track money you've borrowed and lent {projectId}
+            Track money you've borrowed and lent {defaultLoanProject?.id}
           </p>
         </div>
         <Button size="lg" onClick={() => setLoanDialogOpen(true)}>
@@ -156,7 +160,7 @@ function RouteComponent() {
       <CreateNewLoanDialog
         open={loanDialogOpen}
         onOpenChange={setLoanDialogOpen}
-        projectId={projectId}
+        projectId={defaultLoanProject?.id!}
       />
     </div>
   )

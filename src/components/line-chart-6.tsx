@@ -1,33 +1,146 @@
-import { useState } from 'react';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { ChartConfig, ChartContainer, ChartTooltip } from '@/components/ui/chart';
-import { ArrowDown, ArrowUp } from 'lucide-react';
-import { Line, LineChart, XAxis, YAxis } from 'recharts';
-import { cn } from '@/lib/utils';
-import { ClientOnly } from '@tanstack/react-router';
+import { useState } from 'react'
+import { ArrowDown, ArrowUp } from 'lucide-react'
+import { Line, LineChart, XAxis, YAxis } from 'recharts'
+import { ClientOnly } from '@tanstack/react-router'
+import type {
+  ChartConfig} from '@/components/ui/chart';
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import {
+  ChartContainer,
+  ChartTooltip,
+} from '@/components/ui/chart'
+import { cn } from '@/lib/utils'
 
 // E-commerce platform metrics data (adapted from interactive chart example)
 const platformData = [
-  { date: '2024-04-01', orders: 222, response: 150, revenue: 8.2, customers: 420 },
-  { date: '2024-04-02', orders: 97, response: 180, revenue: 4.5, customers: 290 },
-  { date: '2024-04-03', orders: 167, response: 120, revenue: 6.8, customers: 380 },
-  { date: '2024-04-04', orders: 242, response: 260, revenue: 9.1, customers: 520 },
-  { date: '2024-04-05', orders: 301, response: 340, revenue: 11.2, customers: 620 },
-  { date: '2024-04-06', orders: 59, response: 110, revenue: 2.8, customers: 180 },
-  { date: '2024-04-07', orders: 261, response: 190, revenue: 9.8, customers: 510 },
-  { date: '2024-04-08', orders: 327, response: 350, revenue: 12.1, customers: 650 },
-  { date: '2024-04-09', orders: 89, response: 150, revenue: 3.8, customers: 220 },
-  { date: '2024-04-10', orders: 195, response: 165, revenue: 7.2, customers: 390 },
-  { date: '2024-04-11', orders: 224, response: 170, revenue: 8.5, customers: 450 },
-  { date: '2024-04-12', orders: 387, response: 290, revenue: 13.8, customers: 710 },
-  { date: '2024-04-13', orders: 215, response: 250, revenue: 8.2, customers: 430 },
-  { date: '2024-04-14', orders: 75, response: 130, revenue: 3.1, customers: 190 },
-  { date: '2024-04-15', orders: 122, response: 180, revenue: 5.1, customers: 300 },
-  { date: '2024-04-16', orders: 197, response: 160, revenue: 7.5, customers: 390 },
-  { date: '2024-04-17', orders: 473, response: 380, revenue: 17.2, customers: 890 },
-  { date: '2024-04-18', orders: 338, response: 400, revenue: 12.9, customers: 670 },
-];
+  {
+    date: '2024-04-01',
+    orders: 222,
+    response: 150,
+    revenue: 8.2,
+    customers: 420,
+  },
+  {
+    date: '2024-04-02',
+    orders: 97,
+    response: 180,
+    revenue: 4.5,
+    customers: 290,
+  },
+  {
+    date: '2024-04-03',
+    orders: 167,
+    response: 120,
+    revenue: 6.8,
+    customers: 380,
+  },
+  {
+    date: '2024-04-04',
+    orders: 242,
+    response: 260,
+    revenue: 9.1,
+    customers: 520,
+  },
+  {
+    date: '2024-04-05',
+    orders: 301,
+    response: 340,
+    revenue: 11.2,
+    customers: 620,
+  },
+  {
+    date: '2024-04-06',
+    orders: 59,
+    response: 110,
+    revenue: 2.8,
+    customers: 180,
+  },
+  {
+    date: '2024-04-07',
+    orders: 261,
+    response: 190,
+    revenue: 9.8,
+    customers: 510,
+  },
+  {
+    date: '2024-04-08',
+    orders: 327,
+    response: 350,
+    revenue: 12.1,
+    customers: 650,
+  },
+  {
+    date: '2024-04-09',
+    orders: 89,
+    response: 150,
+    revenue: 3.8,
+    customers: 220,
+  },
+  {
+    date: '2024-04-10',
+    orders: 195,
+    response: 165,
+    revenue: 7.2,
+    customers: 390,
+  },
+  {
+    date: '2024-04-11',
+    orders: 224,
+    response: 170,
+    revenue: 8.5,
+    customers: 450,
+  },
+  {
+    date: '2024-04-12',
+    orders: 387,
+    response: 290,
+    revenue: 13.8,
+    customers: 710,
+  },
+  {
+    date: '2024-04-13',
+    orders: 215,
+    response: 250,
+    revenue: 8.2,
+    customers: 430,
+  },
+  {
+    date: '2024-04-14',
+    orders: 75,
+    response: 130,
+    revenue: 3.1,
+    customers: 190,
+  },
+  {
+    date: '2024-04-15',
+    orders: 122,
+    response: 180,
+    revenue: 5.1,
+    customers: 300,
+  },
+  {
+    date: '2024-04-16',
+    orders: 197,
+    response: 160,
+    revenue: 7.5,
+    customers: 390,
+  },
+  {
+    date: '2024-04-17',
+    orders: 473,
+    response: 380,
+    revenue: 17.2,
+    customers: 890,
+  },
+  {
+    date: '2024-04-18',
+    orders: 338,
+    response: 400,
+    revenue: 12.9,
+    customers: 670,
+  },
+]
 
 // Metric configurations
 const metrics = [
@@ -60,7 +173,7 @@ const metrics = [
     previousValue: 1240,
     format: (val: number) => val.toLocaleString(),
   },
-];
+]
 
 // Use custom or Tailwind standard colors: https://tailwindcss.com/docs/colors
 const chartConfig = {
@@ -80,41 +193,46 @@ const chartConfig = {
     label: 'Active Users',
     color: 'var(--color-sky-500)',
   },
-} satisfies ChartConfig;
+} satisfies ChartConfig
 
 // Custom Tooltip
 interface TooltipProps {
-  active?: boolean;
+  active?: boolean
   payload?: Array<{
-    dataKey: string;
-    value: number;
-    color: string;
-  }>;
-  label?: string;
+    dataKey: string
+    value: number
+    color: string
+  }>
+  label?: string
 }
 
 const CustomTooltip = ({ active, payload }: TooltipProps) => {
   if (active && payload && payload.length) {
-    const entry = payload[0];
-    const metric = metrics.find((m) => m.key === entry.dataKey);
+    const entry = payload[0]
+    const metric = metrics.find((m) => m.key === entry.dataKey)
 
     if (metric) {
       return (
         <div className="rounded-lg border bg-popover p-3 shadow-sm shadow-black/5 min-w-[120px]">
           <div className="flex items-center gap-2 text-sm">
-            <div className="size-1.5 rounded-full" style={{ backgroundColor: entry.color }}></div>
+            <div
+              className="size-1.5 rounded-full"
+              style={{ backgroundColor: entry.color }}
+            ></div>
             <span className="text-muted-foreground">{metric.label}:</span>
-            <span className="font-semibold text-popover-foreground">{metric.format(entry.value)}</span>
+            <span className="font-semibold text-popover-foreground">
+              {metric.format(entry.value)}
+            </span>
           </div>
         </div>
-      );
+      )
     }
   }
-  return null;
-};
+  return null
+}
 
 export default function LineChart6() {
-  const [selectedMetric, setSelectedMetric] = useState<string>('response');
+  const [selectedMetric, setSelectedMetric] = useState<string>('response')
 
   return (
     <div className="flex items-center justify-center w-full">
@@ -123,8 +241,10 @@ export default function LineChart6() {
           {/* Metrics Grid */}
           <div className="grid @2xl:grid-cols-2 @3xl:grid-cols-4 grow">
             {metrics.map((metric) => {
-              const change = ((metric.value - metric.previousValue) / metric.previousValue) * 100;
-              const isPositive = metric.isNegative ? change < 0 : change > 0;
+              const change =
+                ((metric.value - metric.previousValue) / metric.previousValue) *
+                100
+              const isPositive = metric.isNegative ? change < 0 : change > 0
 
               return (
                 <button
@@ -136,22 +256,41 @@ export default function LineChart6() {
                   )}
                 >
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm text-muted-foreground">{metric.label}</span>
-                    <Badge variant={isPositive ? 'success' : 'destructive'} appearance="outline">
-                      {isPositive ? <ArrowUp className="size-3" /> : <ArrowDown className="size-3" />}
+                    <span className="text-sm text-muted-foreground">
+                      {metric.label}
+                    </span>
+                    <Badge
+                      variant={isPositive ? 'success' : 'destructive'}
+                      appearance="outline"
+                    >
+                      {isPositive ? (
+                        <ArrowUp className="size-3" />
+                      ) : (
+                        <ArrowDown className="size-3" />
+                      )}
                       {Math.abs(change).toFixed(1)}%
                     </Badge>
                   </div>
-                  <div className="text-2xl font-bold">{metric.format(metric.value)}</div>
-                  <div className="text-xs text-muted-foreground mt-1">from {metric.format(metric.previousValue)}</div>
+                  <div className="text-2xl font-bold">
+                    {metric.format(metric.value)}
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-1">
+                    from {metric.format(metric.previousValue)}
+                  </div>
                 </button>
-              );
+              )
             })}
           </div>
         </CardHeader>
 
         <CardContent className="px-2.5 py-6 min-w-0">
-          <ClientOnly fallback={<div className="w-full min-h-[300px] flex items-center justify-center">Loading chart...</div>}>
+          <ClientOnly
+            fallback={
+              <div className="w-full min-h-[300px] flex items-center justify-center">
+                Loading chart...
+              </div>
+            }
+          >
             <ChartContainer
               config={chartConfig}
               className="w-full min-w-0 aspect-[16/9]"
@@ -167,10 +306,29 @@ export default function LineChart6() {
               >
                 {/* Background pattern for chart area only */}
                 <defs>
-                  <pattern id="dotGrid" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-                    <circle cx="10" cy="10" r="1" fill="var(--input)" fillOpacity="1" />
+                  <pattern
+                    id="dotGrid"
+                    x="0"
+                    y="0"
+                    width="20"
+                    height="20"
+                    patternUnits="userSpaceOnUse"
+                  >
+                    <circle
+                      cx="10"
+                      cy="10"
+                      r="1"
+                      fill="var(--input)"
+                      fillOpacity="1"
+                    />
                   </pattern>
-                  <filter id="lineShadow" x="-100%" y="-100%" width="300%" height="300%">
+                  <filter
+                    id="lineShadow"
+                    x="-100%"
+                    y="-100%"
+                    width="300%"
+                    height="300%"
+                  >
                     <feDropShadow
                       dx="4"
                       dy="6"
@@ -178,8 +336,19 @@ export default function LineChart6() {
                       floodColor={`${chartConfig[selectedMetric as keyof typeof chartConfig]?.color}60`}
                     />
                   </filter>
-                  <filter id="dotShadow" x="-50%" y="-50%" width="200%" height="200%">
-                    <feDropShadow dx="2" dy="2" stdDeviation="3" floodColor="rgba(0,0,0,0.5)" />
+                  <filter
+                    id="dotShadow"
+                    x="-50%"
+                    y="-50%"
+                    width="200%"
+                    height="200%"
+                  >
+                    <feDropShadow
+                      dx="2"
+                      dy="2"
+                      stdDeviation="3"
+                      floodColor="rgba(0,0,0,0.5)"
+                    />
                   </filter>
                 </defs>
 
@@ -190,11 +359,11 @@ export default function LineChart6() {
                   tick={{ fontSize: 11, fill: 'var(--muted-foreground)' }}
                   tickMargin={10}
                   tickFormatter={(value) => {
-                    const date = new Date(value);
+                    const date = new Date(value)
                     return date.toLocaleDateString('en-US', {
                       month: 'short',
                       day: 'numeric',
-                    });
+                    })
                   }}
                 />
 
@@ -205,12 +374,15 @@ export default function LineChart6() {
                   tickMargin={10}
                   tickCount={6}
                   tickFormatter={(value) => {
-                    const metric = metrics.find((m) => m.key === selectedMetric);
-                    return metric ? metric.format(value) : value.toString();
+                    const metric = metrics.find((m) => m.key === selectedMetric)
+                    return metric ? metric.format(value) : value.toString()
                   }}
                 />
 
-                <ChartTooltip content={<CustomTooltip />} cursor={{ strokeDasharray: '3 3', stroke: '#9ca3af' }} />
+                <ChartTooltip
+                  content={<CustomTooltip />}
+                  cursor={{ strokeDasharray: '3 3', stroke: '#9ca3af' }}
+                />
 
                 {/* Background pattern for chart area only */}
                 <rect
@@ -225,13 +397,18 @@ export default function LineChart6() {
                 <Line
                   type="monotone"
                   dataKey={selectedMetric}
-                  stroke={chartConfig[selectedMetric as keyof typeof chartConfig]?.color}
+                  stroke={
+                    chartConfig[selectedMetric as keyof typeof chartConfig]
+                      ?.color
+                  }
                   strokeWidth={2}
                   filter="url(#lineShadow)"
                   dot={false}
                   activeDot={{
                     r: 6,
-                    fill: chartConfig[selectedMetric as keyof typeof chartConfig]?.color,
+                    fill: chartConfig[
+                      selectedMetric as keyof typeof chartConfig
+                    ]?.color,
                     stroke: 'white',
                     strokeWidth: 2,
                     filter: 'url(#dotShadow)',
@@ -243,5 +420,5 @@ export default function LineChart6() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

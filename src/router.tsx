@@ -1,4 +1,7 @@
-import { createRouter as createTanstackRouter, ErrorComponent } from '@tanstack/react-router'
+import {
+  ErrorComponent,
+  createRouter as createTanstackRouter,
+} from '@tanstack/react-router'
 import { setupRouterSsrQueryIntegration } from '@tanstack/react-router-ssr-query'
 import * as TanstackQuery from './integrations/tanstack-query/root-provider'
 
@@ -7,26 +10,28 @@ import { routeTree } from './routeTree.gen'
 
 // Create a new router instance
 export function getRouter() {
-  const queryClient = TanstackQuery.createQueryClient();
+  const queryClient = TanstackQuery.createQueryClient()
   const serverHelpers = TanstackQuery.createServerHelpers({
     queryClient,
-  });
+  })
 
   const router = createTanstackRouter({
     routeTree,
     context: {
       queryClient,
-      trpc: serverHelpers
+      trpc: serverHelpers,
     },
     scrollRestoration: true,
     defaultPreloadStaleTime: 0,
     defaultStaleTime: 0,
-    defaultPreload: "intent",
+    defaultPreload: 'intent',
     defaultViewTransition: true,
     defaultErrorComponent: ({ error }) => <ErrorComponent error={error} />,
     defaultPendingComponent: () => <div>Loading...</div>,
     Wrap: (props: { children: React.ReactNode }) => (
-      <TanstackQuery.Provider queryClient={queryClient}>{props.children}</TanstackQuery.Provider>
+      <TanstackQuery.Provider queryClient={queryClient}>
+        {props.children}
+      </TanstackQuery.Provider>
     ),
   })
 
@@ -38,8 +43,8 @@ export function getRouter() {
 export default getRouter
 
 // // Register the router instance for type safety
-declare module "@tanstack/react-router" {
+declare module '@tanstack/react-router' {
   interface Register {
-    router: ReturnType<typeof getRouter>;
+    router: ReturnType<typeof getRouter>
   }
 }

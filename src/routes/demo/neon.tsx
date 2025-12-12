@@ -1,7 +1,6 @@
 import { createServerFn } from '@tanstack/react-start'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 
-
 const getTodos = createServerFn({
   method: 'GET',
 }).handler(async () => {

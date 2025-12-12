@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1761968804122,
-      "tag": "0000_jittery_hairball",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1762309824640,
-      "tag": "0001_amused_queen_noir",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1762492342562,
-      "tag": "0002_cloudy_venom",
+      "when": 1765408105963,
+      "tag": "0000_short_ghost_rider",
       "breakpoints": true
     }
   ]

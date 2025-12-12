@@ -1,20 +1,21 @@
 import {
   HeadContent,
+  Outlet,
   Scripts,
   createRootRouteWithContext,
 } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 
+import { Toaster } from 'sonner'
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 
 import appCss from '../styles.css?url'
 
 import type { QueryClient } from '@tanstack/react-query'
 
-import type { TRPCRouter } from "@/server/router";
+import type { TRPCRouter } from '@/server/router'
 import type { TRPCOptionsProxy } from '@trpc/tanstack-react-query'
-import { Toaster } from 'sonner'
 import { seo } from '@/lib/seo'
 import NotFound from '@/components/ui/not-found'
 import PersonallyLogo from '@/components/logo'
@@ -35,11 +36,9 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         content: 'width=device-width, initial-scale=1',
       },
       ...seo({
-        title: "Personally",
-        description:
-          "Your personal finance manager",
-        keywords:
-          "personal, finance, manager, personally",
+        title: 'Personally',
+        description: 'Your personal finance manager',
+        keywords: 'personal, finance, manager, personally',
       }),
     ],
     links: [
@@ -50,9 +49,12 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     ],
   }),
 
-  shellComponent: RootDocument,
-  wrapInSuspense: true,
-  notFoundComponent: () => <NotFound />
+  component: () => (
+    <RootDocument>
+      <Outlet />
+    </RootDocument>
+  ),
+  notFoundComponent: () => <NotFound />,
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {
@@ -62,7 +64,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body suppressHydrationWarning>
-        {/* <PersonallyLogo /> */}
         {children}
         <Toaster position="top-center" />
         <TanStackDevtools
@@ -76,14 +77,14 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             },
             TanStackQueryDevtools,
             {
-              name: "Drizzle Studio",
+              name: 'Drizzle Studio',
               render: () => (
                 <iframe
                   src="https://local.drizzle.studio"
                   style={{
                     flexGrow: 1,
-                    width: "100%",
-                    height: "100%",
+                    width: '100%',
+                    height: '100%',
                     border: 0,
                   }}
                 />

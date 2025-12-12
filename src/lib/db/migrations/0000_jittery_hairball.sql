@@ -1,4 +1,8 @@
-CREATE TYPE "transaction_type" AS ENUM ('income', 'expense');
+DO $$ BEGIN
+ CREATE TYPE "transaction_type" AS ENUM ('income', 'expense');
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
 
 
 CREATE TABLE IF NOT EXISTS "account" (

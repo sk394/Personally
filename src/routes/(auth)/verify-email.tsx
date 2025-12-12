@@ -1,35 +1,40 @@
 // routes/(auth)/verify-email.tsx
-import { authClient } from '@/lib/auth/auth-client';
-import { useForm } from '@tanstack/react-form';
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import z from 'zod';
-import { toast } from 'sonner';
-import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
-import { Input } from '@/components/ui/input';
-import { ButtonGroup } from '@/components/ui/button-group';
-import { Button } from '@/components/ui/button';
-import { Spinner } from '@/components/ui/spinner';
-import { useState } from 'react';
+import { useForm } from '@tanstack/react-form'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import z from 'zod'
+import { toast } from 'sonner'
+import { useState } from 'react'
+import { authClient } from '@/lib/auth/auth-client'
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from '@/components/ui/field'
+import { Input } from '@/components/ui/input'
+import { ButtonGroup } from '@/components/ui/button-group'
+import { Button } from '@/components/ui/button'
+import { Spinner } from '@/components/ui/spinner'
 
 export const Route = createFileRoute('/(auth)/verify-email')({
   component: VerifyEmailPage,
   validateSearch: z.object({
     email: z.string().email(),
   }),
-});
+})
 
 const verifySchema = z.object({
-  code: z.string().min(6, "Verification code must be 6 digits"),
-});
+  code: z.string().min(6, 'Verification code must be 6 digits'),
+})
 
 function VerifyEmailPage() {
-  const navigate = useNavigate();
-  const { email } = Route.useSearch();
-  const [isResending, setIsResending] = useState(false);
+  const navigate = useNavigate()
+  const { email } = Route.useSearch()
+  const [isResending, setIsResending] = useState(false)
 
   const form = useForm({
     defaultValues: {
-      code: "",
+      code: '',
     },
     validators: {
       onChange: verifySchema,
@@ -41,41 +46,41 @@ function VerifyEmailPage() {
           otp: value.code,
           fetchOptions: {
             onError: (ctx) => {
-              toast.error(ctx.error.message);
+              toast.error(ctx.error.message)
             },
             onSuccess: async () => {
-              toast.success("Email verified successfully!");
-              navigate({ to: "/" });
+              toast.success('Email verified successfully!')
+              navigate({ to: '/' })
             },
           },
-        });
+        })
       } catch (error) {
-        toast.error("Failed to verify email");
+        toast.error('Failed to verify email')
       }
     },
-  });
+  })
 
   const handleResend = async () => {
-    setIsResending(true);
+    setIsResending(true)
     try {
       await authClient.emailOtp.sendVerificationOtp({
         email: email,
-        type: "email-verification",
+        type: 'email-verification',
         fetchOptions: {
           onSuccess: () => {
-            toast.success("Verification code resent!");
+            toast.success('Verification code resent!')
           },
           onError: (ctx) => {
-            toast.error(ctx.error.message);
+            toast.error(ctx.error.message)
           },
         },
-      });
+      })
     } catch (error) {
-      toast.error("Failed to resend code");
+      toast.error('Failed to resend code')
     } finally {
-      setIsResending(false);
+      setIsResending(false)
     }
-  };
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -89,8 +94,8 @@ function VerifyEmailPage() {
       <form
         id="verify-form"
         onSubmit={(e) => {
-          e.preventDefault();
-          form.handleSubmit();
+          e.preventDefault()
+          form.handleSubmit()
         }}
       >
         <FieldGroup>
@@ -98,10 +103,12 @@ function VerifyEmailPage() {
             name="code"
             children={(field) => {
               const isInvalid =
-                field.state.meta.isTouched && !field.state.meta.isValid;
+                field.state.meta.isTouched && !field.state.meta.isValid
               return (
                 <Field data-invalid={isInvalid}>
-                  <FieldLabel htmlFor={field.name}>Verification Code</FieldLabel>
+                  <FieldLabel htmlFor={field.name}>
+                    Verification Code
+                  </FieldLabel>
                   <Input
                     id={field.name}
                     name={field.name}
@@ -115,7 +122,7 @@ function VerifyEmailPage() {
                   />
                   {isInvalid && <FieldError errors={field.state.meta.errors} />}
                 </Field>
-              );
+              )
             }}
           />
         </FieldGroup>
@@ -149,5 +156,5 @@ function VerifyEmailPage() {
         </button>
       </div>
     </div>
-  );
+  )
 }

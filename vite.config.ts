@@ -6,12 +6,12 @@ import tailwindcss from '@tailwindcss/vite'
 
 import { wrapVinxiConfigWithSentry } from '@sentry/tanstackstart-react'
 import netlify from '@netlify/vite-plugin-tanstack-start'
-import neon from './neon-vite-plugin.ts'
+// import neon from './neon-vite-plugin.ts' // Disabled - using existing database
 
 const config = defineConfig({
   plugins: [
     netlify(),
-    neon,
+    // neon, // Disabled - using existing database
     // this is the plugin that enables path aliases
     viteTsConfigPaths({
       projects: ['./tsconfig.json'],
@@ -20,6 +20,22 @@ const config = defineConfig({
     tanstackStart(),
     viteReact(),
   ],
+  resolve: {
+    alias: {
+      path: 'path-browserify',
+    },
+  },
+  optimizeDeps: {
+    exclude: ['@tanstack/react-form'],
+  },
+  ssr: {
+    noExternal: ['better-auth'],
+  },
+  test: {
+    environment: 'jsdom',
+    setupFiles: ['./src/test-setup.ts'],
+    globals: true,
+  },
 })
 
 export default wrapVinxiConfigWithSentry(config, {

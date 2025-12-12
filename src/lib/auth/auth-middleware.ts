@@ -1,10 +1,9 @@
-
-import { auth } from "@/lib/auth/auth";
-import { createMiddleware } from "@tanstack/react-start";
-import { getRequest, setResponseStatus } from "@tanstack/react-start/server";
+import { createMiddleware } from '@tanstack/react-start'
+import { getRequest, setResponseStatus } from '@tanstack/react-start/server'
+import { auth } from '@/lib/auth/auth'
 
 export const authMiddleware = createMiddleware({
-  type: "request",
+  type: 'request',
 }).server(async ({ next }) => {
   const session = await auth.api.getSession({
     headers: getRequest().headers,
@@ -13,15 +12,15 @@ export const authMiddleware = createMiddleware({
       // https://www.better-auth.com/docs/concepts/session-management#session-caching
       disableCookieCache: true,
     },
-  });
+  })
 
   if (!session) {
-    setResponseStatus(401);
-    throw new Error("Unauthorized");
+    setResponseStatus(401)
+    throw new Error('Unauthorized')
   }
   return await next({
     context: {
       user: session.user,
     },
-  });
-});
+  })
+})

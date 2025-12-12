@@ -1,19 +1,19 @@
 import { createFormHook } from '@tanstack/react-form'
 import { fieldContext, formContext } from './personally.form-context'
 import {
-  EmailField,
-  SelectField,
-  SwitchField,
-  SliderField,
   CheckboxField,
-  RadioGroupField,
-  SubmitButton,
-  TextField as PersonallyTextField,
-  TextArea as PersonallyTextArea,
   ChoiceCardField,
+  DateField,
+  EmailField,
   NumberField,
   PasswordField,
-  DateField,
+  TextArea as PersonallyTextArea,
+  TextField as PersonallyTextField,
+  RadioGroupField,
+  SelectField,
+  SliderField,
+  SubmitButton,
+  SwitchField,
 } from '@/components/personally.FormComponents'
 
 export const { useAppForm, withForm } = createFormHook({

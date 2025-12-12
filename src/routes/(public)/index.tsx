@@ -1,5 +1,4 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { Suspense } from 'react';
 
 export const Route = createFileRoute('/(public)/')({
   component: HomePage,
@@ -18,9 +17,7 @@ function HomePage() {
         </div>
       </div>
 
-      <Suspense fallback={<div className="py-6">Loading user...</div>}>
-        {/* <UserAction /> */}
-      </Suspense>
+      {/* <UserAction /> */}
 
       <div className="flex flex-col items-center gap-2">
         <p className="text-foreground/80 max-sm:text-xs">
@@ -50,7 +47,7 @@ function HomePage() {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 // function UserAction() {

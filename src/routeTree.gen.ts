@@ -14,13 +14,13 @@ import { Route as publicIndexRouteImport } from './routes/(public)/index'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-query'
 import { Route as DemoTableRouteImport } from './routes/demo/table'
 import { Route as DemoNeonRouteImport } from './routes/demo/neon'
-import { Route as DashboardTestRouteImport } from './routes/dashboard/test'
 import { Route as DashboardCategoryRouteImport } from './routes/dashboard/category'
 import { Route as authVerifyEmailRouteImport } from './routes/(auth)/verify-email'
 import { Route as authSignupRouteImport } from './routes/(auth)/signup'
 import { Route as authSigninRouteImport } from './routes/(auth)/signin'
 import { Route as DashboardSplitwiseIndexRouteImport } from './routes/dashboard/splitwise/index'
 import { Route as DashboardReminderIndexRouteImport } from './routes/dashboard/reminder/index'
+import { Route as DashboardProjectsIndexRouteImport } from './routes/dashboard/projects/index'
 import { Route as DashboardLoanIndexRouteImport } from './routes/dashboard/loan/index'
 import { Route as DashboardIncomeIndexRouteImport } from './routes/dashboard/income/index'
 import { Route as DashboardExpenseIndexRouteImport } from './routes/dashboard/expense/index'
@@ -31,6 +31,8 @@ import { Route as DemoFormSimpleRouteImport } from './routes/demo/form.simple'
 import { Route as DemoFormAddressRouteImport } from './routes/demo/form.address'
 import { Route as DemoApiTqTodosRouteImport } from './routes/demo/api.tq-todos'
 import { Route as DemoApiNamesRouteImport } from './routes/demo/api.names'
+import { Route as DashboardSplitwiseProjectIdRouteImport } from './routes/dashboard/splitwise/$projectId'
+import { Route as DashboardLoanProjectIdRouteImport } from './routes/dashboard/loan/$projectId'
 import { Route as ApiTrpcSplatRouteImport } from './routes/api/trpc/$'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as DemoStartSsrIndexRouteImport } from './routes/demo/start.ssr.index'
@@ -63,11 +65,6 @@ const DemoNeonRoute = DemoNeonRouteImport.update({
   path: '/demo/neon',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DashboardTestRoute = DashboardTestRouteImport.update({
-  id: '/dashboard/test',
-  path: '/dashboard/test',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const DashboardCategoryRoute = DashboardCategoryRouteImport.update({
   id: '/dashboard/category',
   path: '/dashboard/category',
@@ -96,6 +93,11 @@ const DashboardSplitwiseIndexRoute = DashboardSplitwiseIndexRouteImport.update({
 const DashboardReminderIndexRoute = DashboardReminderIndexRouteImport.update({
   id: '/dashboard/reminder/',
   path: '/dashboard/reminder/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardProjectsIndexRoute = DashboardProjectsIndexRouteImport.update({
+  id: '/dashboard/projects/',
+  path: '/dashboard/projects/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardLoanIndexRoute = DashboardLoanIndexRouteImport.update({
@@ -148,6 +150,17 @@ const DemoApiNamesRoute = DemoApiNamesRouteImport.update({
   path: '/demo/api/names',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardSplitwiseProjectIdRoute =
+  DashboardSplitwiseProjectIdRouteImport.update({
+    id: '/dashboard/splitwise/$projectId',
+    path: '/dashboard/splitwise/$projectId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const DashboardLoanProjectIdRoute = DashboardLoanProjectIdRouteImport.update({
+  id: '/dashboard/loan/$projectId',
+  path: '/dashboard/loan/$projectId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiTrpcSplatRoute = ApiTrpcSplatRouteImport.update({
   id: '/api/trpc/$',
   path: '/api/trpc/$',
@@ -184,7 +197,6 @@ export interface FileRoutesByFullPath {
   '/signup': typeof authSignupRoute
   '/verify-email': typeof authVerifyEmailRoute
   '/dashboard/category': typeof DashboardCategoryRoute
-  '/dashboard/test': typeof DashboardTestRoute
   '/demo/neon': typeof DemoNeonRoute
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
@@ -192,6 +204,8 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
+  '/dashboard/loan/$projectId': typeof DashboardLoanProjectIdRoute
+  '/dashboard/splitwise/$projectId': typeof DashboardSplitwiseProjectIdRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
   '/demo/form/address': typeof DemoFormAddressRoute
@@ -202,6 +216,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/expense': typeof DashboardExpenseIndexRoute
   '/dashboard/income': typeof DashboardIncomeIndexRoute
   '/dashboard/loan': typeof DashboardLoanIndexRoute
+  '/dashboard/projects': typeof DashboardProjectsIndexRoute
   '/dashboard/reminder': typeof DashboardReminderIndexRoute
   '/dashboard/splitwise': typeof DashboardSplitwiseIndexRoute
   '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
@@ -214,7 +229,6 @@ export interface FileRoutesByTo {
   '/signup': typeof authSignupRoute
   '/verify-email': typeof authVerifyEmailRoute
   '/dashboard/category': typeof DashboardCategoryRoute
-  '/dashboard/test': typeof DashboardTestRoute
   '/demo/neon': typeof DemoNeonRoute
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
@@ -222,6 +236,8 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
+  '/dashboard/loan/$projectId': typeof DashboardLoanProjectIdRoute
+  '/dashboard/splitwise/$projectId': typeof DashboardSplitwiseProjectIdRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
   '/demo/form/address': typeof DemoFormAddressRoute
@@ -232,6 +248,7 @@ export interface FileRoutesByTo {
   '/dashboard/expense': typeof DashboardExpenseIndexRoute
   '/dashboard/income': typeof DashboardIncomeIndexRoute
   '/dashboard/loan': typeof DashboardLoanIndexRoute
+  '/dashboard/projects': typeof DashboardProjectsIndexRoute
   '/dashboard/reminder': typeof DashboardReminderIndexRoute
   '/dashboard/splitwise': typeof DashboardSplitwiseIndexRoute
   '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
@@ -245,7 +262,6 @@ export interface FileRoutesById {
   '/(auth)/signup': typeof authSignupRoute
   '/(auth)/verify-email': typeof authVerifyEmailRoute
   '/dashboard/category': typeof DashboardCategoryRoute
-  '/dashboard/test': typeof DashboardTestRoute
   '/demo/neon': typeof DemoNeonRoute
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
@@ -253,6 +269,8 @@ export interface FileRoutesById {
   '/dashboard/': typeof DashboardIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
+  '/dashboard/loan/$projectId': typeof DashboardLoanProjectIdRoute
+  '/dashboard/splitwise/$projectId': typeof DashboardSplitwiseProjectIdRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
   '/demo/form/address': typeof DemoFormAddressRoute
@@ -263,6 +281,7 @@ export interface FileRoutesById {
   '/dashboard/expense/': typeof DashboardExpenseIndexRoute
   '/dashboard/income/': typeof DashboardIncomeIndexRoute
   '/dashboard/loan/': typeof DashboardLoanIndexRoute
+  '/dashboard/projects/': typeof DashboardProjectsIndexRoute
   '/dashboard/reminder/': typeof DashboardReminderIndexRoute
   '/dashboard/splitwise/': typeof DashboardSplitwiseIndexRoute
   '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
@@ -277,7 +296,6 @@ export interface FileRouteTypes {
     | '/signup'
     | '/verify-email'
     | '/dashboard/category'
-    | '/dashboard/test'
     | '/demo/neon'
     | '/demo/table'
     | '/demo/tanstack-query'
@@ -285,6 +303,8 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/api/auth/$'
     | '/api/trpc/$'
+    | '/dashboard/loan/$projectId'
+    | '/dashboard/splitwise/$projectId'
     | '/demo/api/names'
     | '/demo/api/tq-todos'
     | '/demo/form/address'
@@ -295,6 +315,7 @@ export interface FileRouteTypes {
     | '/dashboard/expense'
     | '/dashboard/income'
     | '/dashboard/loan'
+    | '/dashboard/projects'
     | '/dashboard/reminder'
     | '/dashboard/splitwise'
     | '/demo/start/ssr/data-only'
@@ -307,7 +328,6 @@ export interface FileRouteTypes {
     | '/signup'
     | '/verify-email'
     | '/dashboard/category'
-    | '/dashboard/test'
     | '/demo/neon'
     | '/demo/table'
     | '/demo/tanstack-query'
@@ -315,6 +335,8 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/api/auth/$'
     | '/api/trpc/$'
+    | '/dashboard/loan/$projectId'
+    | '/dashboard/splitwise/$projectId'
     | '/demo/api/names'
     | '/demo/api/tq-todos'
     | '/demo/form/address'
@@ -325,6 +347,7 @@ export interface FileRouteTypes {
     | '/dashboard/expense'
     | '/dashboard/income'
     | '/dashboard/loan'
+    | '/dashboard/projects'
     | '/dashboard/reminder'
     | '/dashboard/splitwise'
     | '/demo/start/ssr/data-only'
@@ -337,7 +360,6 @@ export interface FileRouteTypes {
     | '/(auth)/signup'
     | '/(auth)/verify-email'
     | '/dashboard/category'
-    | '/dashboard/test'
     | '/demo/neon'
     | '/demo/table'
     | '/demo/tanstack-query'
@@ -345,6 +367,8 @@ export interface FileRouteTypes {
     | '/dashboard/'
     | '/api/auth/$'
     | '/api/trpc/$'
+    | '/dashboard/loan/$projectId'
+    | '/dashboard/splitwise/$projectId'
     | '/demo/api/names'
     | '/demo/api/tq-todos'
     | '/demo/form/address'
@@ -355,6 +379,7 @@ export interface FileRouteTypes {
     | '/dashboard/expense/'
     | '/dashboard/income/'
     | '/dashboard/loan/'
+    | '/dashboard/projects/'
     | '/dashboard/reminder/'
     | '/dashboard/splitwise/'
     | '/demo/start/ssr/data-only'
@@ -368,7 +393,6 @@ export interface RootRouteChildren {
   authSignupRoute: typeof authSignupRoute
   authVerifyEmailRoute: typeof authVerifyEmailRoute
   DashboardCategoryRoute: typeof DashboardCategoryRoute
-  DashboardTestRoute: typeof DashboardTestRoute
   DemoNeonRoute: typeof DemoNeonRoute
   DemoTableRoute: typeof DemoTableRoute
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
@@ -376,6 +400,8 @@ export interface RootRouteChildren {
   DashboardIndexRoute: typeof DashboardIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiTrpcSplatRoute: typeof ApiTrpcSplatRoute
+  DashboardLoanProjectIdRoute: typeof DashboardLoanProjectIdRoute
+  DashboardSplitwiseProjectIdRoute: typeof DashboardSplitwiseProjectIdRoute
   DemoApiNamesRoute: typeof DemoApiNamesRoute
   DemoApiTqTodosRoute: typeof DemoApiTqTodosRoute
   DemoFormAddressRoute: typeof DemoFormAddressRoute
@@ -386,6 +412,7 @@ export interface RootRouteChildren {
   DashboardExpenseIndexRoute: typeof DashboardExpenseIndexRoute
   DashboardIncomeIndexRoute: typeof DashboardIncomeIndexRoute
   DashboardLoanIndexRoute: typeof DashboardLoanIndexRoute
+  DashboardProjectsIndexRoute: typeof DashboardProjectsIndexRoute
   DashboardReminderIndexRoute: typeof DashboardReminderIndexRoute
   DashboardSplitwiseIndexRoute: typeof DashboardSplitwiseIndexRoute
   DemoStartSsrDataOnlyRoute: typeof DemoStartSsrDataOnlyRoute
@@ -431,13 +458,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoNeonRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/dashboard/test': {
-      id: '/dashboard/test'
-      path: '/dashboard/test'
-      fullPath: '/dashboard/test'
-      preLoaderRoute: typeof DashboardTestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/dashboard/category': {
       id: '/dashboard/category'
       path: '/dashboard/category'
@@ -478,6 +498,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard/reminder'
       fullPath: '/dashboard/reminder'
       preLoaderRoute: typeof DashboardReminderIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/projects/': {
+      id: '/dashboard/projects/'
+      path: '/dashboard/projects'
+      fullPath: '/dashboard/projects'
+      preLoaderRoute: typeof DashboardProjectsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard/loan/': {
@@ -550,6 +577,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoApiNamesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/splitwise/$projectId': {
+      id: '/dashboard/splitwise/$projectId'
+      path: '/dashboard/splitwise/$projectId'
+      fullPath: '/dashboard/splitwise/$projectId'
+      preLoaderRoute: typeof DashboardSplitwiseProjectIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/loan/$projectId': {
+      id: '/dashboard/loan/$projectId'
+      path: '/dashboard/loan/$projectId'
+      fullPath: '/dashboard/loan/$projectId'
+      preLoaderRoute: typeof DashboardLoanProjectIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/trpc/$': {
       id: '/api/trpc/$'
       path: '/api/trpc/$'
@@ -600,7 +641,6 @@ const rootRouteChildren: RootRouteChildren = {
   authSignupRoute: authSignupRoute,
   authVerifyEmailRoute: authVerifyEmailRoute,
   DashboardCategoryRoute: DashboardCategoryRoute,
-  DashboardTestRoute: DashboardTestRoute,
   DemoNeonRoute: DemoNeonRoute,
   DemoTableRoute: DemoTableRoute,
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
@@ -608,6 +648,8 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardIndexRoute: DashboardIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiTrpcSplatRoute: ApiTrpcSplatRoute,
+  DashboardLoanProjectIdRoute: DashboardLoanProjectIdRoute,
+  DashboardSplitwiseProjectIdRoute: DashboardSplitwiseProjectIdRoute,
   DemoApiNamesRoute: DemoApiNamesRoute,
   DemoApiTqTodosRoute: DemoApiTqTodosRoute,
   DemoFormAddressRoute: DemoFormAddressRoute,
@@ -618,6 +660,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardExpenseIndexRoute: DashboardExpenseIndexRoute,
   DashboardIncomeIndexRoute: DashboardIncomeIndexRoute,
   DashboardLoanIndexRoute: DashboardLoanIndexRoute,
+  DashboardProjectsIndexRoute: DashboardProjectsIndexRoute,
   DashboardReminderIndexRoute: DashboardReminderIndexRoute,
   DashboardSplitwiseIndexRoute: DashboardSplitwiseIndexRoute,
   DemoStartSsrDataOnlyRoute: DemoStartSsrDataOnlyRoute,
