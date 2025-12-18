@@ -16,21 +16,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog-old'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { DatePicker } from '@/components/ui/date-picker'
+import { InputGroupAddon } from '@/components/ui/input-group'
 
 interface SettlementDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   projectId: string
+  amount: number
   currentUserId: string
 }
 
@@ -38,6 +30,7 @@ const settlementSchema = z.object({
   payerId: z.string().min(1, 'Payer is required'),
   receiverId: z.string().min(1, 'Receiver is required'),
   amount: z.number().gt(0, 'Amount must be greater than 0'),
+  paymentMethod: z.enum(['zelle', 'cash']),
   date: z.date(),
 })
 
@@ -45,6 +38,7 @@ export function SettlementDialog({
   open,
   onOpenChange,
   projectId,
+  amount,
   currentUserId,
 }: SettlementDialogProps) {
   const trpc = useTRPC()
@@ -59,7 +53,8 @@ export function SettlementDialog({
     defaultValues: {
       payerId: currentUserId,
       receiverId: '',
-      amount: 0,
+      amount: amount / 100,
+      paymentMethod: 'zelle',
       date: new Date(),
     },
     validators: {
@@ -76,6 +71,7 @@ export function SettlementDialog({
         fromUserId: value.payerId,
         toUserId: value.receiverId,
         amount: Math.round(value.amount * 100), // cents
+        paymentMethod: value.paymentMethod as 'zelle' | 'cash',
         date: value.date,
       })
     },
@@ -88,7 +84,10 @@ export function SettlementDialog({
           queryKey: [['splitwise', 'getBalances']],
         })
         queryClient.invalidateQueries({
-          queryKey: [['splitwise', 'getExpenses']], // Maybe add settlement to expense list?
+          queryKey: [['splitwise', 'getExpenses']],
+        })
+        queryClient.invalidateQueries({
+          queryKey: [['splitwise', 'getSettlements']],
         })
         setIsComplete(true)
         setTimeout(() => {
@@ -146,113 +145,95 @@ export function SettlementDialog({
                 }}
                 className="space-y-4"
               >
-                <form.Field
-                  name="payerId"
-                  children={(field) => (
-                    <div className="space-y-2">
-                      <Label>Payer</Label>
-                      <Select
-                        value={field.state.value}
-                        onValueChange={field.handleChange}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select payer" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value={currentUserId}>You</SelectItem>
-                          {members
-                            ?.filter((m) => m.userId !== currentUserId)
-                            .map((member) => (
-                              <SelectItem
-                                key={member.userId}
-                                value={member.userId}
-                              >
-                                {member.user.name ||
-                                  member.user.email ||
-                                  'Unknown'}
-                              </SelectItem>
-                            ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  )}
-                />
-
-                <div className="flex justify-center">
-                  <div className="bg-muted p-2 rounded-full">
-                    <DollarSign className="size-4 text-muted-foreground" />
-                  </div>
+                <div className="grid md:grid-cols-2 gap-4 sm:grid-cols-1">
+                  <form.AppField
+                    name="payerId"
+                  >
+                    {(field) => (
+                      <>
+                        <field.SelectField
+                          label="Who is paying?"
+                          placeholder="Select payer"
+                          values={[
+                            { value: currentUserId, label: 'You' },
+                            ...(members?.filter((m) => m.userId !== currentUserId).map((member) => ({
+                              value: member?.userId,
+                              label: member?.user.name || member.user.email || 'Unknown',
+                            })) ?? []),
+                          ]}
+                        />
+                      </>
+                    )}
+                  </form.AppField>
+                  <form.AppField
+                    name="receiverId"
+                  >
+                    {(field) => (
+                      <>
+                        <field.SelectField
+                          label="Who is receiving?"
+                          placeholder="Select receiver"
+                          values={[
+                            { value: currentUserId, label: 'You' },
+                            ...(members?.filter((m) => m.userId !== currentUserId).map((member) => ({
+                              value: member?.userId,
+                              label: member?.user.name || member.user.email || 'Unknown',
+                            })) ?? []),
+                          ]}
+                        />
+                      </>
+                    )}
+                  </form.AppField>
                 </div>
 
-                <form.Field
-                  name="receiverId"
-                  children={(field) => (
-                    <div className="space-y-2">
-                      <Label>Recipient</Label>
-                      <Select
-                        value={field.state.value}
-                        onValueChange={field.handleChange}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select recipient" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value={currentUserId}>You</SelectItem>
-                          {members
-                            ?.filter((m) => m.userId !== currentUserId)
-                            .map((member) => (
-                              <SelectItem
-                                key={member.userId}
-                                value={member.userId}
-                              >
-                                {member.user.name ||
-                                  member.user.email ||
-                                  'Unknown'}
-                              </SelectItem>
-                            ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  )}
-                />
+                <div className="grid md:grid-cols-2 gap-4 sm:grid-cols-1">
+                  <form.AppField
+                    name="amount"
+                  >
+                    {(field) => (
 
-                <form.Field
-                  name="amount"
-                  children={(field) => (
-                    <div className="space-y-2">
-                      <Label htmlFor={field.name}>Amount</Label>
-                      <div className="relative">
-                        <DollarSign className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          id={field.name}
-                          type="number"
-                          value={field.state.value}
-                          onBlur={field.handleBlur}
-                          onChange={(e) =>
-                            field.handleChange(parseFloat(e.target.value))
-                          }
-                          className="pl-8 text-lg font-semibold"
-                          placeholder="0.00"
-                        />
-                      </div>
-                    </div>
-                  )}
-                />
-
-                <form.Field
-                  name="date"
-                  children={(field) => (
-                    <div className="space-y-2">
-                      <Label>Date</Label>
-                      <DatePicker
-                        date={field.state.value}
-                        setDate={(date) =>
-                          field.handleChange(date || new Date())
+                      <field.NumberField
+                        label="Amount"
+                        placeholder="Enter amount"
+                        required
+                        children={
+                          <InputGroupAddon>
+                            <DollarSign className="size-4" />
+                          </InputGroupAddon>
                         }
                       />
-                    </div>
+
+                    )}
+                  </form.AppField>
+
+                  <form.AppField
+                    name="paymentMethod"
+                  >
+                    {(field) => (
+                      <>
+                        <field.SelectField
+                          label="Payment Method"
+                          placeholder="Select payment method"
+                          values={[
+                            { value: 'zelle', label: 'Zelle' },
+                            { value: 'cash', label: 'Cash' },
+                          ]}
+                        />
+                      </>
+                    )}
+                  </form.AppField>
+                </div>
+                <form.AppField
+                  name="date"
+                >
+                  {(field) => (
+                    <field.DateField
+                      label="Date"
+                      placeholder="Select date"
+                      className="col-span-2"
+                    />
                   )}
-                />
+                </form.AppField>
               </form>
             </DialogBody>
 

@@ -8,6 +8,13 @@
       "when": 1765408105963,
       "tag": "0000_short_ghost_rider",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1765848270566,
+      "tag": "0001_lively_blink",
+      "breakpoints": true
     }
   ]
 }

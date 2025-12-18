@@ -1,7 +1,7 @@
-import {  clsx } from 'clsx'
+import { clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 import { v7 } from 'uuid'
-import type {ClassValue} from 'clsx';
+import type { ClassValue } from 'clsx';
 
 export function cn(...inputs: Array<ClassValue>) {
   return twMerge(clsx(inputs))
@@ -26,4 +26,12 @@ export function formatDate(date: Date) {
     month: 'short',
     day: 'numeric',
   })
+}
+
+export function formatProperName(value: string) {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .replace(/\b\p{L}/gu, char => char.toUpperCase())
 }

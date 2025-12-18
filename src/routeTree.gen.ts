@@ -9,12 +9,10 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AiRouteImport } from './routes/ai'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as publicIndexRouteImport } from './routes/(public)/index'
-import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-query'
-import { Route as DemoTableRouteImport } from './routes/demo/table'
-import { Route as DemoNeonRouteImport } from './routes/demo/neon'
-import { Route as DashboardCategoryRouteImport } from './routes/dashboard/category'
+import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as authVerifyEmailRouteImport } from './routes/(auth)/verify-email'
 import { Route as authSignupRouteImport } from './routes/(auth)/signup'
 import { Route as authSigninRouteImport } from './routes/(auth)/signin'
@@ -24,22 +22,17 @@ import { Route as DashboardProjectsIndexRouteImport } from './routes/dashboard/p
 import { Route as DashboardLoanIndexRouteImport } from './routes/dashboard/loan/index'
 import { Route as DashboardIncomeIndexRouteImport } from './routes/dashboard/income/index'
 import { Route as DashboardExpenseIndexRouteImport } from './routes/dashboard/expense/index'
-import { Route as DemoStartServerFuncsRouteImport } from './routes/demo/start.server-funcs'
-import { Route as DemoStartApiRequestRouteImport } from './routes/demo/start.api-request'
-import { Route as DemoSentryTestingRouteImport } from './routes/demo/sentry.testing'
-import { Route as DemoFormSimpleRouteImport } from './routes/demo/form.simple'
-import { Route as DemoFormAddressRouteImport } from './routes/demo/form.address'
-import { Route as DemoApiTqTodosRouteImport } from './routes/demo/api.tq-todos'
-import { Route as DemoApiNamesRouteImport } from './routes/demo/api.names'
 import { Route as DashboardSplitwiseProjectIdRouteImport } from './routes/dashboard/splitwise/$projectId'
-import { Route as DashboardLoanProjectIdRouteImport } from './routes/dashboard/loan/$projectId'
 import { Route as ApiTrpcSplatRouteImport } from './routes/api/trpc/$'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
-import { Route as DemoStartSsrIndexRouteImport } from './routes/demo/start.ssr.index'
-import { Route as DemoStartSsrSpaModeRouteImport } from './routes/demo/start.ssr.spa-mode'
-import { Route as DemoStartSsrFullSsrRouteImport } from './routes/demo/start.ssr.full-ssr'
-import { Route as DemoStartSsrDataOnlyRouteImport } from './routes/demo/start.ssr.data-only'
+import { Route as DashboardLoanProjectIdIndexRouteImport } from './routes/dashboard/loan/$projectId/index'
+import { Route as DashboardLoanProjectIdSingleLoanIdRouteImport } from './routes/dashboard/loan/$projectId/single/$loanId'
 
+const AiRoute = AiRouteImport.update({
+  id: '/ai',
+  path: '/ai',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
   id: '/dashboard/',
   path: '/dashboard/',
@@ -50,24 +43,9 @@ const publicIndexRoute = publicIndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DemoTanstackQueryRoute = DemoTanstackQueryRouteImport.update({
-  id: '/demo/tanstack-query',
-  path: '/demo/tanstack-query',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoTableRoute = DemoTableRouteImport.update({
-  id: '/demo/table',
-  path: '/demo/table',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoNeonRoute = DemoNeonRouteImport.update({
-  id: '/demo/neon',
-  path: '/demo/neon',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DashboardCategoryRoute = DashboardCategoryRouteImport.update({
-  id: '/dashboard/category',
-  path: '/dashboard/category',
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
 const authVerifyEmailRoute = authVerifyEmailRouteImport.update({
@@ -115,52 +93,12 @@ const DashboardExpenseIndexRoute = DashboardExpenseIndexRouteImport.update({
   path: '/dashboard/expense/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DemoStartServerFuncsRoute = DemoStartServerFuncsRouteImport.update({
-  id: '/demo/start/server-funcs',
-  path: '/demo/start/server-funcs',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoStartApiRequestRoute = DemoStartApiRequestRouteImport.update({
-  id: '/demo/start/api-request',
-  path: '/demo/start/api-request',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoSentryTestingRoute = DemoSentryTestingRouteImport.update({
-  id: '/demo/sentry/testing',
-  path: '/demo/sentry/testing',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoFormSimpleRoute = DemoFormSimpleRouteImport.update({
-  id: '/demo/form/simple',
-  path: '/demo/form/simple',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoFormAddressRoute = DemoFormAddressRouteImport.update({
-  id: '/demo/form/address',
-  path: '/demo/form/address',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoApiTqTodosRoute = DemoApiTqTodosRouteImport.update({
-  id: '/demo/api/tq-todos',
-  path: '/demo/api/tq-todos',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoApiNamesRoute = DemoApiNamesRouteImport.update({
-  id: '/demo/api/names',
-  path: '/demo/api/names',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const DashboardSplitwiseProjectIdRoute =
   DashboardSplitwiseProjectIdRouteImport.update({
     id: '/dashboard/splitwise/$projectId',
     path: '/dashboard/splitwise/$projectId',
     getParentRoute: () => rootRouteImport,
   } as any)
-const DashboardLoanProjectIdRoute = DashboardLoanProjectIdRouteImport.update({
-  id: '/dashboard/loan/$projectId',
-  path: '/dashboard/loan/$projectId',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiTrpcSplatRoute = ApiTrpcSplatRouteImport.update({
   id: '/api/trpc/$',
   path: '/api/trpc/$',
@@ -171,258 +109,173 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DemoStartSsrIndexRoute = DemoStartSsrIndexRouteImport.update({
-  id: '/demo/start/ssr/',
-  path: '/demo/start/ssr/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoStartSsrSpaModeRoute = DemoStartSsrSpaModeRouteImport.update({
-  id: '/demo/start/ssr/spa-mode',
-  path: '/demo/start/ssr/spa-mode',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoStartSsrFullSsrRoute = DemoStartSsrFullSsrRouteImport.update({
-  id: '/demo/start/ssr/full-ssr',
-  path: '/demo/start/ssr/full-ssr',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoStartSsrDataOnlyRoute = DemoStartSsrDataOnlyRouteImport.update({
-  id: '/demo/start/ssr/data-only',
-  path: '/demo/start/ssr/data-only',
-  getParentRoute: () => rootRouteImport,
-} as any)
+const DashboardLoanProjectIdIndexRoute =
+  DashboardLoanProjectIdIndexRouteImport.update({
+    id: '/dashboard/loan/$projectId/',
+    path: '/dashboard/loan/$projectId/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const DashboardLoanProjectIdSingleLoanIdRoute =
+  DashboardLoanProjectIdSingleLoanIdRouteImport.update({
+    id: '/dashboard/loan/$projectId/single/$loanId',
+    path: '/dashboard/loan/$projectId/single/$loanId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
+  '/ai': typeof AiRoute
   '/signin': typeof authSigninRoute
   '/signup': typeof authSignupRoute
   '/verify-email': typeof authVerifyEmailRoute
-  '/dashboard/category': typeof DashboardCategoryRoute
-  '/demo/neon': typeof DemoNeonRoute
-  '/demo/table': typeof DemoTableRoute
-  '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/api/chat': typeof ApiChatRoute
   '/': typeof publicIndexRoute
   '/dashboard': typeof DashboardIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
-  '/dashboard/loan/$projectId': typeof DashboardLoanProjectIdRoute
   '/dashboard/splitwise/$projectId': typeof DashboardSplitwiseProjectIdRoute
-  '/demo/api/names': typeof DemoApiNamesRoute
-  '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
-  '/demo/form/address': typeof DemoFormAddressRoute
-  '/demo/form/simple': typeof DemoFormSimpleRoute
-  '/demo/sentry/testing': typeof DemoSentryTestingRoute
-  '/demo/start/api-request': typeof DemoStartApiRequestRoute
-  '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
   '/dashboard/expense': typeof DashboardExpenseIndexRoute
   '/dashboard/income': typeof DashboardIncomeIndexRoute
   '/dashboard/loan': typeof DashboardLoanIndexRoute
   '/dashboard/projects': typeof DashboardProjectsIndexRoute
   '/dashboard/reminder': typeof DashboardReminderIndexRoute
   '/dashboard/splitwise': typeof DashboardSplitwiseIndexRoute
-  '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
-  '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
-  '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
-  '/demo/start/ssr': typeof DemoStartSsrIndexRoute
+  '/dashboard/loan/$projectId': typeof DashboardLoanProjectIdIndexRoute
+  '/dashboard/loan/$projectId/single/$loanId': typeof DashboardLoanProjectIdSingleLoanIdRoute
 }
 export interface FileRoutesByTo {
+  '/ai': typeof AiRoute
   '/signin': typeof authSigninRoute
   '/signup': typeof authSignupRoute
   '/verify-email': typeof authVerifyEmailRoute
-  '/dashboard/category': typeof DashboardCategoryRoute
-  '/demo/neon': typeof DemoNeonRoute
-  '/demo/table': typeof DemoTableRoute
-  '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/api/chat': typeof ApiChatRoute
   '/': typeof publicIndexRoute
   '/dashboard': typeof DashboardIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
-  '/dashboard/loan/$projectId': typeof DashboardLoanProjectIdRoute
   '/dashboard/splitwise/$projectId': typeof DashboardSplitwiseProjectIdRoute
-  '/demo/api/names': typeof DemoApiNamesRoute
-  '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
-  '/demo/form/address': typeof DemoFormAddressRoute
-  '/demo/form/simple': typeof DemoFormSimpleRoute
-  '/demo/sentry/testing': typeof DemoSentryTestingRoute
-  '/demo/start/api-request': typeof DemoStartApiRequestRoute
-  '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
   '/dashboard/expense': typeof DashboardExpenseIndexRoute
   '/dashboard/income': typeof DashboardIncomeIndexRoute
   '/dashboard/loan': typeof DashboardLoanIndexRoute
   '/dashboard/projects': typeof DashboardProjectsIndexRoute
   '/dashboard/reminder': typeof DashboardReminderIndexRoute
   '/dashboard/splitwise': typeof DashboardSplitwiseIndexRoute
-  '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
-  '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
-  '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
-  '/demo/start/ssr': typeof DemoStartSsrIndexRoute
+  '/dashboard/loan/$projectId': typeof DashboardLoanProjectIdIndexRoute
+  '/dashboard/loan/$projectId/single/$loanId': typeof DashboardLoanProjectIdSingleLoanIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/ai': typeof AiRoute
   '/(auth)/signin': typeof authSigninRoute
   '/(auth)/signup': typeof authSignupRoute
   '/(auth)/verify-email': typeof authVerifyEmailRoute
-  '/dashboard/category': typeof DashboardCategoryRoute
-  '/demo/neon': typeof DemoNeonRoute
-  '/demo/table': typeof DemoTableRoute
-  '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/api/chat': typeof ApiChatRoute
   '/(public)/': typeof publicIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
-  '/dashboard/loan/$projectId': typeof DashboardLoanProjectIdRoute
   '/dashboard/splitwise/$projectId': typeof DashboardSplitwiseProjectIdRoute
-  '/demo/api/names': typeof DemoApiNamesRoute
-  '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
-  '/demo/form/address': typeof DemoFormAddressRoute
-  '/demo/form/simple': typeof DemoFormSimpleRoute
-  '/demo/sentry/testing': typeof DemoSentryTestingRoute
-  '/demo/start/api-request': typeof DemoStartApiRequestRoute
-  '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
   '/dashboard/expense/': typeof DashboardExpenseIndexRoute
   '/dashboard/income/': typeof DashboardIncomeIndexRoute
   '/dashboard/loan/': typeof DashboardLoanIndexRoute
   '/dashboard/projects/': typeof DashboardProjectsIndexRoute
   '/dashboard/reminder/': typeof DashboardReminderIndexRoute
   '/dashboard/splitwise/': typeof DashboardSplitwiseIndexRoute
-  '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
-  '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
-  '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
-  '/demo/start/ssr/': typeof DemoStartSsrIndexRoute
+  '/dashboard/loan/$projectId/': typeof DashboardLoanProjectIdIndexRoute
+  '/dashboard/loan/$projectId/single/$loanId': typeof DashboardLoanProjectIdSingleLoanIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/ai'
     | '/signin'
     | '/signup'
     | '/verify-email'
-    | '/dashboard/category'
-    | '/demo/neon'
-    | '/demo/table'
-    | '/demo/tanstack-query'
+    | '/api/chat'
     | '/'
     | '/dashboard'
     | '/api/auth/$'
     | '/api/trpc/$'
-    | '/dashboard/loan/$projectId'
     | '/dashboard/splitwise/$projectId'
-    | '/demo/api/names'
-    | '/demo/api/tq-todos'
-    | '/demo/form/address'
-    | '/demo/form/simple'
-    | '/demo/sentry/testing'
-    | '/demo/start/api-request'
-    | '/demo/start/server-funcs'
     | '/dashboard/expense'
     | '/dashboard/income'
     | '/dashboard/loan'
     | '/dashboard/projects'
     | '/dashboard/reminder'
     | '/dashboard/splitwise'
-    | '/demo/start/ssr/data-only'
-    | '/demo/start/ssr/full-ssr'
-    | '/demo/start/ssr/spa-mode'
-    | '/demo/start/ssr'
+    | '/dashboard/loan/$projectId'
+    | '/dashboard/loan/$projectId/single/$loanId'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/ai'
     | '/signin'
     | '/signup'
     | '/verify-email'
-    | '/dashboard/category'
-    | '/demo/neon'
-    | '/demo/table'
-    | '/demo/tanstack-query'
+    | '/api/chat'
     | '/'
     | '/dashboard'
     | '/api/auth/$'
     | '/api/trpc/$'
-    | '/dashboard/loan/$projectId'
     | '/dashboard/splitwise/$projectId'
-    | '/demo/api/names'
-    | '/demo/api/tq-todos'
-    | '/demo/form/address'
-    | '/demo/form/simple'
-    | '/demo/sentry/testing'
-    | '/demo/start/api-request'
-    | '/demo/start/server-funcs'
     | '/dashboard/expense'
     | '/dashboard/income'
     | '/dashboard/loan'
     | '/dashboard/projects'
     | '/dashboard/reminder'
     | '/dashboard/splitwise'
-    | '/demo/start/ssr/data-only'
-    | '/demo/start/ssr/full-ssr'
-    | '/demo/start/ssr/spa-mode'
-    | '/demo/start/ssr'
+    | '/dashboard/loan/$projectId'
+    | '/dashboard/loan/$projectId/single/$loanId'
   id:
     | '__root__'
+    | '/ai'
     | '/(auth)/signin'
     | '/(auth)/signup'
     | '/(auth)/verify-email'
-    | '/dashboard/category'
-    | '/demo/neon'
-    | '/demo/table'
-    | '/demo/tanstack-query'
+    | '/api/chat'
     | '/(public)/'
     | '/dashboard/'
     | '/api/auth/$'
     | '/api/trpc/$'
-    | '/dashboard/loan/$projectId'
     | '/dashboard/splitwise/$projectId'
-    | '/demo/api/names'
-    | '/demo/api/tq-todos'
-    | '/demo/form/address'
-    | '/demo/form/simple'
-    | '/demo/sentry/testing'
-    | '/demo/start/api-request'
-    | '/demo/start/server-funcs'
     | '/dashboard/expense/'
     | '/dashboard/income/'
     | '/dashboard/loan/'
     | '/dashboard/projects/'
     | '/dashboard/reminder/'
     | '/dashboard/splitwise/'
-    | '/demo/start/ssr/data-only'
-    | '/demo/start/ssr/full-ssr'
-    | '/demo/start/ssr/spa-mode'
-    | '/demo/start/ssr/'
+    | '/dashboard/loan/$projectId/'
+    | '/dashboard/loan/$projectId/single/$loanId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  AiRoute: typeof AiRoute
   authSigninRoute: typeof authSigninRoute
   authSignupRoute: typeof authSignupRoute
   authVerifyEmailRoute: typeof authVerifyEmailRoute
-  DashboardCategoryRoute: typeof DashboardCategoryRoute
-  DemoNeonRoute: typeof DemoNeonRoute
-  DemoTableRoute: typeof DemoTableRoute
-  DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
+  ApiChatRoute: typeof ApiChatRoute
   publicIndexRoute: typeof publicIndexRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiTrpcSplatRoute: typeof ApiTrpcSplatRoute
-  DashboardLoanProjectIdRoute: typeof DashboardLoanProjectIdRoute
   DashboardSplitwiseProjectIdRoute: typeof DashboardSplitwiseProjectIdRoute
-  DemoApiNamesRoute: typeof DemoApiNamesRoute
-  DemoApiTqTodosRoute: typeof DemoApiTqTodosRoute
-  DemoFormAddressRoute: typeof DemoFormAddressRoute
-  DemoFormSimpleRoute: typeof DemoFormSimpleRoute
-  DemoSentryTestingRoute: typeof DemoSentryTestingRoute
-  DemoStartApiRequestRoute: typeof DemoStartApiRequestRoute
-  DemoStartServerFuncsRoute: typeof DemoStartServerFuncsRoute
   DashboardExpenseIndexRoute: typeof DashboardExpenseIndexRoute
   DashboardIncomeIndexRoute: typeof DashboardIncomeIndexRoute
   DashboardLoanIndexRoute: typeof DashboardLoanIndexRoute
   DashboardProjectsIndexRoute: typeof DashboardProjectsIndexRoute
   DashboardReminderIndexRoute: typeof DashboardReminderIndexRoute
   DashboardSplitwiseIndexRoute: typeof DashboardSplitwiseIndexRoute
-  DemoStartSsrDataOnlyRoute: typeof DemoStartSsrDataOnlyRoute
-  DemoStartSsrFullSsrRoute: typeof DemoStartSsrFullSsrRoute
-  DemoStartSsrSpaModeRoute: typeof DemoStartSsrSpaModeRoute
-  DemoStartSsrIndexRoute: typeof DemoStartSsrIndexRoute
+  DashboardLoanProjectIdIndexRoute: typeof DashboardLoanProjectIdIndexRoute
+  DashboardLoanProjectIdSingleLoanIdRoute: typeof DashboardLoanProjectIdSingleLoanIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/ai': {
+      id: '/ai'
+      path: '/ai'
+      fullPath: '/ai'
+      preLoaderRoute: typeof AiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard/': {
       id: '/dashboard/'
       path: '/dashboard'
@@ -437,32 +290,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof publicIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/demo/tanstack-query': {
-      id: '/demo/tanstack-query'
-      path: '/demo/tanstack-query'
-      fullPath: '/demo/tanstack-query'
-      preLoaderRoute: typeof DemoTanstackQueryRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demo/table': {
-      id: '/demo/table'
-      path: '/demo/table'
-      fullPath: '/demo/table'
-      preLoaderRoute: typeof DemoTableRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demo/neon': {
-      id: '/demo/neon'
-      path: '/demo/neon'
-      fullPath: '/demo/neon'
-      preLoaderRoute: typeof DemoNeonRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard/category': {
-      id: '/dashboard/category'
-      path: '/dashboard/category'
-      fullPath: '/dashboard/category'
-      preLoaderRoute: typeof DashboardCategoryRouteImport
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(auth)/verify-email': {
@@ -528,67 +360,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardExpenseIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/demo/start/server-funcs': {
-      id: '/demo/start/server-funcs'
-      path: '/demo/start/server-funcs'
-      fullPath: '/demo/start/server-funcs'
-      preLoaderRoute: typeof DemoStartServerFuncsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demo/start/api-request': {
-      id: '/demo/start/api-request'
-      path: '/demo/start/api-request'
-      fullPath: '/demo/start/api-request'
-      preLoaderRoute: typeof DemoStartApiRequestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demo/sentry/testing': {
-      id: '/demo/sentry/testing'
-      path: '/demo/sentry/testing'
-      fullPath: '/demo/sentry/testing'
-      preLoaderRoute: typeof DemoSentryTestingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demo/form/simple': {
-      id: '/demo/form/simple'
-      path: '/demo/form/simple'
-      fullPath: '/demo/form/simple'
-      preLoaderRoute: typeof DemoFormSimpleRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demo/form/address': {
-      id: '/demo/form/address'
-      path: '/demo/form/address'
-      fullPath: '/demo/form/address'
-      preLoaderRoute: typeof DemoFormAddressRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demo/api/tq-todos': {
-      id: '/demo/api/tq-todos'
-      path: '/demo/api/tq-todos'
-      fullPath: '/demo/api/tq-todos'
-      preLoaderRoute: typeof DemoApiTqTodosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demo/api/names': {
-      id: '/demo/api/names'
-      path: '/demo/api/names'
-      fullPath: '/demo/api/names'
-      preLoaderRoute: typeof DemoApiNamesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/dashboard/splitwise/$projectId': {
       id: '/dashboard/splitwise/$projectId'
       path: '/dashboard/splitwise/$projectId'
       fullPath: '/dashboard/splitwise/$projectId'
       preLoaderRoute: typeof DashboardSplitwiseProjectIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard/loan/$projectId': {
-      id: '/dashboard/loan/$projectId'
-      path: '/dashboard/loan/$projectId'
-      fullPath: '/dashboard/loan/$projectId'
-      preLoaderRoute: typeof DashboardLoanProjectIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/trpc/$': {
@@ -605,68 +381,43 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/demo/start/ssr/': {
-      id: '/demo/start/ssr/'
-      path: '/demo/start/ssr'
-      fullPath: '/demo/start/ssr'
-      preLoaderRoute: typeof DemoStartSsrIndexRouteImport
+    '/dashboard/loan/$projectId/': {
+      id: '/dashboard/loan/$projectId/'
+      path: '/dashboard/loan/$projectId'
+      fullPath: '/dashboard/loan/$projectId'
+      preLoaderRoute: typeof DashboardLoanProjectIdIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/demo/start/ssr/spa-mode': {
-      id: '/demo/start/ssr/spa-mode'
-      path: '/demo/start/ssr/spa-mode'
-      fullPath: '/demo/start/ssr/spa-mode'
-      preLoaderRoute: typeof DemoStartSsrSpaModeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demo/start/ssr/full-ssr': {
-      id: '/demo/start/ssr/full-ssr'
-      path: '/demo/start/ssr/full-ssr'
-      fullPath: '/demo/start/ssr/full-ssr'
-      preLoaderRoute: typeof DemoStartSsrFullSsrRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demo/start/ssr/data-only': {
-      id: '/demo/start/ssr/data-only'
-      path: '/demo/start/ssr/data-only'
-      fullPath: '/demo/start/ssr/data-only'
-      preLoaderRoute: typeof DemoStartSsrDataOnlyRouteImport
+    '/dashboard/loan/$projectId/single/$loanId': {
+      id: '/dashboard/loan/$projectId/single/$loanId'
+      path: '/dashboard/loan/$projectId/single/$loanId'
+      fullPath: '/dashboard/loan/$projectId/single/$loanId'
+      preLoaderRoute: typeof DashboardLoanProjectIdSingleLoanIdRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
+  AiRoute: AiRoute,
   authSigninRoute: authSigninRoute,
   authSignupRoute: authSignupRoute,
   authVerifyEmailRoute: authVerifyEmailRoute,
-  DashboardCategoryRoute: DashboardCategoryRoute,
-  DemoNeonRoute: DemoNeonRoute,
-  DemoTableRoute: DemoTableRoute,
-  DemoTanstackQueryRoute: DemoTanstackQueryRoute,
+  ApiChatRoute: ApiChatRoute,
   publicIndexRoute: publicIndexRoute,
   DashboardIndexRoute: DashboardIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiTrpcSplatRoute: ApiTrpcSplatRoute,
-  DashboardLoanProjectIdRoute: DashboardLoanProjectIdRoute,
   DashboardSplitwiseProjectIdRoute: DashboardSplitwiseProjectIdRoute,
-  DemoApiNamesRoute: DemoApiNamesRoute,
-  DemoApiTqTodosRoute: DemoApiTqTodosRoute,
-  DemoFormAddressRoute: DemoFormAddressRoute,
-  DemoFormSimpleRoute: DemoFormSimpleRoute,
-  DemoSentryTestingRoute: DemoSentryTestingRoute,
-  DemoStartApiRequestRoute: DemoStartApiRequestRoute,
-  DemoStartServerFuncsRoute: DemoStartServerFuncsRoute,
   DashboardExpenseIndexRoute: DashboardExpenseIndexRoute,
   DashboardIncomeIndexRoute: DashboardIncomeIndexRoute,
   DashboardLoanIndexRoute: DashboardLoanIndexRoute,
   DashboardProjectsIndexRoute: DashboardProjectsIndexRoute,
   DashboardReminderIndexRoute: DashboardReminderIndexRoute,
   DashboardSplitwiseIndexRoute: DashboardSplitwiseIndexRoute,
-  DemoStartSsrDataOnlyRoute: DemoStartSsrDataOnlyRoute,
-  DemoStartSsrFullSsrRoute: DemoStartSsrFullSsrRoute,
-  DemoStartSsrSpaModeRoute: DemoStartSsrSpaModeRoute,
-  DemoStartSsrIndexRoute: DemoStartSsrIndexRoute,
+  DashboardLoanProjectIdIndexRoute: DashboardLoanProjectIdIndexRoute,
+  DashboardLoanProjectIdSingleLoanIdRoute:
+    DashboardLoanProjectIdSingleLoanIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

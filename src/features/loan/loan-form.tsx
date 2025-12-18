@@ -185,8 +185,8 @@ export const LoanForm = withForm({
               )}
 
               <div className="flex-1 w-full">
-                <form.AppField name="dueDate">
-                  {(field) => <field.DateField placeholder="Due Date" />}
+                <form.AppField name="loanDate">
+                  {(field) => <field.DateField placeholder="Loan Date" />}
                 </form.AppField>
               </div>
             </div>

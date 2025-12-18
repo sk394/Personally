@@ -1,4 +1,4 @@
-import { desc, eq } from 'drizzle-orm'
+import { and, desc, eq, inArray } from 'drizzle-orm'
 import { z } from 'zod'
 import { TRPCError } from '@trpc/server'
 import { db } from '@/lib/db'
@@ -9,19 +9,53 @@ import {
   loanPayment,
 } from '@/lib/db/schema/loan'
 import { project } from '@/lib/db/schema/project'
+import { user } from '@/lib/db/schema/auth'
 import { createTRPCRouter, protectedProcedure } from '@/integrations/trpc/init'
 
 export const loanRouter = createTRPCRouter({
-  // Get all loans
-  getAll: protectedProcedure.query(async ({ ctx }) => {
+  // get only loans for the current user
+  getForUser: protectedProcedure.query(async ({ ctx }) => {
     const userId = ctx.session!.user.id
-    // get all loans for user
-    const loanData = await db
+    const loans = await db
       .select()
       .from(loan)
       .where(eq(loan.userId, userId))
       .orderBy(desc(loan.createdAt))
-    return loanData
+
+    if (!loans.length) {
+      return []
+    }
+    return loans
+  }),
+
+  // Get all loans
+  getAll: protectedProcedure.query(async ({ ctx }) => {
+    const userId = ctx.session!.user.id
+    // get all loans for user
+    const loans = await db
+      .select()
+      .from(loan)
+      .where(eq(loan.userId, userId))
+      .orderBy(desc(loan.createdAt))
+
+    if (!loans.length) {
+      return []
+    }
+
+    const loanIds = loans.map((l) => l.id)
+
+    // Get payments for these loans
+    const payments = await db
+      .select()
+      .from(loanPayment)
+      .where(inArray(loanPayment.loanId, loanIds))
+      .orderBy(desc(loanPayment.paymentDate))
+
+    // Attach payments to loans
+    return loans.map((l) => ({
+      ...l,
+      payments: payments.filter((p) => p.loanId === l.id),
+    }))
   }),
 
   // Get a single loan by ID
@@ -82,6 +116,27 @@ export const loanRouter = createTRPCRouter({
           code: 'NOT_FOUND',
           message: 'Project not found',
         })
+      }
+
+      // Check if a loan with the same contact email already exists in this project
+      if (input.contactEmail) {
+        const existingLoan = await db
+          .select()
+          .from(loan)
+          .where(
+            and(
+              eq(loan.projectId, input.projectId),
+              eq(loan.contactEmail, input.contactEmail),
+            ),
+          )
+          .limit(1)
+
+        if (existingLoan.length > 0) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: `A loan with contact email "${input.contactEmail}" already exists in this project`,
+          })
+        }
       }
 
       const [newLoan] = await db
@@ -191,6 +246,22 @@ export const loanRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.session!.user.id
 
+      // Get user information
+      const userData = await db
+        .select()
+        .from(user)
+        .where(eq(user.id, userId))
+        .limit(1)
+
+      if (!userData.length) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'User not found',
+        })
+      }
+
+      const userName = userData[0].name
+
       // Verify loan ownership
       const loanData = await db
         .select()
@@ -212,24 +283,52 @@ export const loanRouter = createTRPCRouter({
         })
       }
 
+      // Determine if payment is in the same direction as the loan or opposite
+      // createdBy is the name of who made the payment (either userName or contactName)
+      const isPaymentByOwner = input.createdBy === userName
+      const loanType = loanData[0].type
+
+      /**
+       * Payment direction logic:
+       * - If loan type is "lent" (user lent to contact):
+       *   - Owner pays → Additional lending (INCREASE principal)
+       *   - Contact pays → Repayment (DECREASE debt, current behavior)
+       * - If loan type is "borrowed" (user borrowed from contact):
+       *   - Owner pays → Repayment (DECREASE debt, current behavior)
+       *   - Contact pays → Additional borrowing (INCREASE principal)
+       */
+      const isSameDirectionAsLoan =
+        (loanType === 'lent' && isPaymentByOwner) ||
+        (loanType === 'borrowed' && !isPaymentByOwner)
+
       // Create the payment
       const [newPayment] = await db
         .insert(loanPayment)
-        .values({
-          ...input,
-          createdBy: userId,
-        })
+        .values(input)
         .returning()
 
-      // Update total paid on the loan
-      const newTotalPaid = loanData[0].totalPaid + input.amount
+      let newTotalPaid: number
+      let newPrincipalAmount: number
+
+      if (isSameDirectionAsLoan) {
+        // Payment in same direction as loan - increase principal
+        newPrincipalAmount = loanData[0].principalAmount + input.amount
+        // TotalPaid doesn't change since this is additional lending/borrowing
+        newTotalPaid = loanData[0].totalPaid
+      } else {
+        // Payment in opposite direction - this is a repayment
+        newTotalPaid = loanData[0].totalPaid + input.amount
+        // Principal doesn't change
+        newPrincipalAmount = loanData[0].principalAmount
+      }
 
       await db
         .update(loan)
         .set({
           totalPaid: newTotalPaid,
+          principalAmount: newPrincipalAmount,
           status:
-            newTotalPaid >= loanData[0].principalAmount
+            newTotalPaid >= newPrincipalAmount
               ? 'paid'
               : newTotalPaid > 0
                 ? 'partially_paid'

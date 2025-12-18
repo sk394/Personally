@@ -2,9 +2,8 @@ import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { mcp } from 'better-auth/plugins'
 import { emailOTP } from 'better-auth/plugins/email-otp'
-import { passkey } from 'better-auth/plugins/passkey'
 import { twoFactor } from 'better-auth/plugins/two-factor'
-import { reactStartCookies } from 'better-auth/react-start'
+import { tanstackStartCookies } from "better-auth/tanstack-start";
 import { env } from '../env.server'
 import { sendEmail } from './send-email'
 import ResetPasswordEmail from '@/components/auth/reset-password-email'
@@ -87,7 +86,6 @@ export const auth = betterAuth({
 
   plugins: [
     twoFactor(),
-    passkey(),
     // admin({
     //   defaultRole: "user",
     //   adminRoles: ["admin", "superadmin"],
@@ -113,6 +111,6 @@ export const auth = betterAuth({
         })
       },
     }),
-    reactStartCookies(), // make sure this is the last plugin in the array
+    tanstackStartCookies(), // make sure this is the last plugin in the array
   ],
 })

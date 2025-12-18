@@ -6,6 +6,7 @@ import {
 } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
+import { aiDevtoolsPlugin } from '@tanstack/react-ai-devtools'
 
 import { Toaster } from 'sonner'
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
@@ -19,6 +20,7 @@ import type { TRPCOptionsProxy } from '@trpc/tanstack-react-query'
 import { seo } from '@/lib/seo'
 import NotFound from '@/components/ui/not-found'
 import PersonallyLogo from '@/components/logo'
+import { ConfirmProvider } from '@/hooks/confirm-context'
 
 export interface MyRouterContext {
   queryClient: QueryClient
@@ -51,8 +53,10 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 
   component: () => (
     <RootDocument>
-      <Outlet />
-    </RootDocument>
+      <ConfirmProvider>
+        <Outlet />
+      </ConfirmProvider>
+    </RootDocument >
   ),
   notFoundComponent: () => <NotFound />,
 })
@@ -90,7 +94,11 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                 />
               ),
             },
+            aiDevtoolsPlugin(),
           ]}
+          eventBusConfig={{
+            connectToServerBus: true,
+          }}
         />
         <Scripts />
       </body>

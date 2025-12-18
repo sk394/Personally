@@ -281,7 +281,7 @@ export function DateField({
   placeholder?: string
   className?: string
 }) {
-  const field = useFieldContext<string>()
+  const field = useFieldContext<Date | undefined>()
   const errors = useStore(field.store, (state) => state.meta.errors)
 
   return (
@@ -317,7 +317,7 @@ export function DateField({
                 className="absolute top-1/2 -end-0 -translate-y-1/2"
                 onClick={(e) => {
                   e.preventDefault()
-                  field.handleChange('')
+                  field.handleChange(undefined)
                 }}
               >
                 <X className="w-3 h-3" />
@@ -331,7 +331,7 @@ export function DateField({
             selected={
               field.state.value ? new Date(field.state.value) : undefined
             }
-            onSelect={(date) => field.handleChange(date?.toISOString() || '')}
+            onSelect={(date) => field.handleChange(date ?? undefined)}
             autoFocus
           />
         </PopoverContent>

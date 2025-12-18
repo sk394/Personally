@@ -383,7 +383,7 @@ export const splitwiseRouter = createTRPCRouter({
             startDate.setMonth(startDate.getMonth() + (settings?.interestStartMonths || 0))
             interestStartDate = startDate
           }
-          console.log("interest", interestStartDate)
+
           // Only calculate interest if we've passed the start date
           if (interestStartDate && new Date() >= interestStartDate) {
             accruedInterest = calculateAccruedInterest(
@@ -415,6 +415,7 @@ export const splitwiseRouter = createTRPCRouter({
         fromUserId: z.string(),
         toUserId: z.string(),
         amount: z.number().int().positive(),
+        paymentMethod: z.enum(['zelle', 'cash']),
         date: z.date(),
       }),
     )
@@ -429,19 +430,10 @@ export const splitwiseRouter = createTRPCRouter({
           amount: input.amount,
           principalAmount: input.amount,
           settlementDate: input.date,
-          status: 'verified', // Auto-confirm for now
+          status: 'pending',
+          paymentMethod: input.paymentMethod,
           createdBy: ctx.session!.user.id,
         })
-
-        // Update balance: fromUser pays toUser
-        // This reduces the debt of fromUser to toUser
-        // Equivalent to adding debt of toUser to fromUser (reverse flow)
-        // Wait, settleUp is a payment.
-        // If A owes B $10. A pays B $10.
-        // Balance A->B reduces by 10.
-        // My addToBalance logic handles "adding debt".
-        // "A pays B" is equivalent to "B owes A" in terms of balance shift.
-        // So we call addToBalance(tx, projectId, toUser, fromUser, amount).
 
         await addToBalance(
           tx,
@@ -537,5 +529,35 @@ export const splitwiseRouter = createTRPCRouter({
           })
           .returning()
       }
+    }),
+  getSettlements: protectedProcedure
+    .input(z.object({ projectId: z.string().uuid() }))
+    .query(async ({ ctx, input }) => {
+      const userId = ctx.session!.user.id
+      // Verify access (basic check if user is member or owner)
+      const projectData = await db.query.project.findFirst({
+        where: eq(project.id, input.projectId),
+      })
+      const member = await db.query.projectMember.findFirst({
+        where: and(
+          eq(projectMember.projectId, input.projectId),
+          eq(projectMember.userId, userId),
+        ),
+      })
+
+      if (!member && projectData?.userId !== userId) {
+        throw new TRPCError({ code: 'FORBIDDEN', message: 'Access denied' })
+      }
+
+      const settlements = await db.query.settlement.findMany({
+        where: eq(settlement.projectId, input.projectId),
+        with: {
+          payer: true,
+          receiver: true,
+        },
+        orderBy: (settlement, { desc }) => [desc(settlement.settlementDate)],
+      })
+
+      return settlements
     }),
 })

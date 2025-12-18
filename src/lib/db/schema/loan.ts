@@ -14,7 +14,7 @@ import {
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod'
 import z from 'zod'
 import { user } from '@/lib/db/schema/auth'
-import { project } from '@/lib/db/schema'
+import { project } from '@/lib/db/schema/project'
 import { loanStatusEnum, loanTypeEnum, paymentMethodEnum } from '@/lib/db/enums'
 
 export const loan = pgTable(
@@ -72,9 +72,7 @@ export const loanPayment = pgTable('loan_payment', {
   notes: text('notes'),
 
   createdAt: timestamp('created_at').defaultNow().notNull(),
-  createdBy: text('created_by')
-    .notNull()
-    .references(() => user.id),
+  createdBy: text('created_by').notNull(),
 })
 
 export type Loan = typeof loan.$inferSelect
@@ -89,7 +87,9 @@ export type NewLoanPayment = typeof loanPayment.$inferInsert
 // Schema for inserting new loans
 export const insertLoanSchema = createInsertSchema(loan)
 // Schema for inserting new loan payments
-export const InsertLoanPaymentSchema = LoanPaymentSelectSchema.extend({}).omit({
+export const InsertLoanPaymentSchema = createInsertSchema(loanPayment, {
+  notes: z.string().optional().nullable(),
+}).omit({
   id: true,
   createdAt: true,
 })

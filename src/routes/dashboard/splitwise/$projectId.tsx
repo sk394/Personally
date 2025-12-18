@@ -13,6 +13,9 @@ import {
   UserPlus,
   Users,
   ArrowLeft,
+  CheckCircle2,
+  Clock,
+  BadgeCheckIcon,
 } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
@@ -40,8 +43,9 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import { Link } from '@tanstack/react-router'
+import { Badge } from '@/components/ui/badge'
 
-const authStateFn = createServerFn({ method: 'GET' }).handler(async () => {
+const authStateFn = createServerFn({ method: 'GET' }).handler(async ({ }) => {
   const session = await auth.api.getSession({ headers: getRequest().headers })
   if (!session) {
     throw redirect({
@@ -79,6 +83,10 @@ export const Route = createFileRoute('/dashboard/splitwise/$projectId')({
       context.trpc.splitwise.getSettings.queryOptions({ projectId: params.projectId }),
     )
 
+    await context.queryClient.prefetchQuery(
+      context.trpc.splitwise.getSettlements.queryOptions({ projectId: params.projectId }),
+    )
+
     return { userId, projectId: params.projectId }
   },
   errorComponent: ({ error }) => {
@@ -107,6 +115,8 @@ function RouteComponent() {
   const [settlementDialogOpen, setSettlementDialogOpen] = useState(false)
   const [inviteDialogOpen, setInviteDialogOpen] = useState(false)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [showAllSettlements, setShowAllSettlements] = useState(false)
+
 
   // Query project data with access control
   const { data: project, isLoading: isProjectLoading, error: projectError } = useQuery(
@@ -126,6 +136,10 @@ function RouteComponent() {
 
   const { data: settings } = useQuery(
     trpc.splitwise.getSettings.queryOptions({ projectId }),
+  )
+
+  const { data: settlements } = useQuery(
+    trpc.splitwise.getSettlements.queryOptions({ projectId }),
   )
 
   // Handle project access errors
@@ -207,6 +221,10 @@ function RouteComponent() {
     balances
       ?.filter((b) => b.fromUserId === userId)
       .reduce((acc, curr) => acc + (curr.accruedInterest || 0), 0) || 0
+
+  if (!settlements || settlements.length === 0) return null
+  const hasMoreThanFive = settlements.length > 3
+  const visibleSettlements = showAllSettlements ? settlements : settlements.slice(0, 3)
 
   return (
     <div className="container mx-auto p-6 max-w-5xl">
@@ -336,6 +354,64 @@ function RouteComponent() {
                     </span>
                   </div>
                 )}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Settlements */}
+          {settlements && settlements.length > 0 && (
+            <Card className="bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-900">
+              <CardContent className="p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <p className="text-xs font-medium text-blue-600 dark:text-blue-400 uppercase tracking-wide">
+                    Recent Settlements
+                  </p>
+                  {hasMoreThanFive && (
+                    <button
+                      type="button"
+                      onClick={() => setShowAllSettlements((v) => !v)}
+                      className="text-xs font-medium text-blue-600 hover:underline dark:text-blue-400"
+                    >
+                      {showAllSettlements ? "Show less" : `View all (${settlements.length})`}
+                    </button>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  {visibleSettlements.map((settlement) => {
+                    const isPayer = settlement.fromUserId === userId
+                    const otherUser = isPayer
+                      ? settlement.receiver
+                      : settlement.payer
+                    const isVerified = settlement.status === 'verified'
+
+                    return (
+                      <div
+                        key={settlement.id}
+                        className="flex items-center justify-between text-sm p-2"
+                      >
+                        <div className="flex items-center gap-2 flex-1">
+                          {isVerified ? (
+                            <BadgeCheckIcon className="size-4 text-blue-600 dark:text-blue-400 flex-shrink-0" />
+                          ) : (
+                            <Clock className="size-4 text-yellow-600 dark:text-yellow-400 flex-shrink-0" />
+                          )}
+                          <span className="text-muted-foreground">
+                            {isPayer ? 'You' : otherUser?.name?.trim().split(/\s+/)[0] || otherUser?.email || 'User'} {settlement.paymentMethod === 'cash' ? 'paid' : 'zelle'}{' '}{isPayer ? otherUser?.name?.trim().split(/\s+/)[0] : 'You'} {" "}
+                            <span className="font-semibold  text-green-600">
+                              {formatCurrency(settlement.amount, 'USD')}
+                            </span>
+                            {' '}on{' '}
+                            {new Date(settlement.settlementDate).toLocaleDateString('en-US', {
+                              month: 'short',
+                              day: 'numeric',
+                            })}
+                          </span>
+
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
               </CardContent>
             </Card>
           )}
@@ -496,7 +572,7 @@ function RouteComponent() {
                       </div>
 
                       {/* Delete Button (Only visible if I paid or am owner - simplified to if I paid for now) */}
-                      {expense.paidBy === userId && (
+                      {/* {expense.paidBy === userId && (
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
                             <Button
@@ -537,7 +613,7 @@ function RouteComponent() {
                             </AlertDialogFooter>
                           </AlertDialogContent>
                         </AlertDialog>
-                      )}
+                      )} */}
                     </div>
                   </CardContent>
                 </Card>
@@ -558,6 +634,7 @@ function RouteComponent() {
         open={settlementDialogOpen}
         onOpenChange={setSettlementDialogOpen}
         projectId={projectId}
+        amount={totalIOwe}
         currentUserId={userId}
       />
 
