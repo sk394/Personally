@@ -57,11 +57,10 @@ export function ProjectActions({ project, compact = false }: ProjectActionsProps
         trpc.project.delete.mutationOptions({
             onSuccess: () => {
                 queryClient.invalidateQueries({
-                    queryKey: [['project']],
+                    queryKey: [['project', 'getAll']],
                 })
                 toast.success('Project deleted successfully')
                 setDeleteDialogOpen(false)
-                navigate({ to: '/dashboard' })
             },
             onError: (error: any) => {
                 toast.error(error.message || 'Failed to delete project')
@@ -73,11 +72,10 @@ export function ProjectActions({ project, compact = false }: ProjectActionsProps
         trpc.project.leave.mutationOptions({
             onSuccess: () => {
                 queryClient.invalidateQueries({
-                    queryKey: [['project']],
+                    queryKey: [['project', 'getAll']],
                 })
                 toast.success('Left project successfully')
                 setLeaveDialogOpen(false)
-                navigate({ to: '/dashboard' })
             },
             onError: (error: any) => {
                 toast.error(error.message || 'Failed to leave project')
@@ -292,7 +290,7 @@ function DeleteProjectDialog({
                     <AlertDialogAction
                         onClick={onConfirm}
                         disabled={isDeleting}
-                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        className="bg-destructive hover:bg-destructive/90"
                     >
                         {isDeleting ? 'Deleting...' : 'Delete Project'}
                     </AlertDialogAction>

@@ -1,19 +1,11 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import PersonallyLogo from '@/components/logo'
 import { useTRPC } from '@/integrations/trpc/react'
 import ChatInput from '@/components/chat/chat-input'
 import { MessageList } from '@/components/chat/chat-messages'
-import { streamChatResponse } from '@/lib/chat-actions'
-import { buildMessagesForStream } from '@/lib/multimodal'
-
-type Message = {
-  id: string
-  role: 'user' | 'assistant'
-  content: string
-  createdAt: Date
-}
+import { fetchServerSentEvents, UIMessage, useChat } from '@tanstack/ai-react'
 
 export const Route = createFileRoute('/dashboard/')({
   component: RouteComponent,
@@ -52,87 +44,33 @@ function RouteComponent() {
 
   const [input, setInput] = useState("")
   const [selectedProject, setSelectedProject] = useState<string | null>(null)
-  const [messages, setMessages] = useState<Message[]>([])
-  const [isStreaming, setIsStreaming] = useState(false)
-  const [streamingContent, setStreamingContent] = useState('')
+
+  const { messages, sendMessage, isLoading } = useChat({
+    connection: fetchServerSentEvents("/api/chat"),
+    //   initialMessages: [
+    //     {
+    //       id: 'welcome',
+    //       role: 'assistant',
+    //       parts: [{
+    //         type: "text", content: `Hello! I'm your AI loan assistant. I can help you with:
+
+    // • **View Projects** - Show your loan, splitwise, or general projects
+    // • **Analyze Loans** - Get details about your borrowed or lent money
+    // • **Create Loans** - Add new loan entries easily
+    // • **Calculate Totals** - See how much you owe or are owed
+    // • **Payment History** - Review payment records
+
+    // What would you like to do today?`,
+    //       }],
+    //     },
+    //   ],
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     e.stopPropagation()
-
-    const userContent = input.trim()
-    if (!userContent || isStreaming) return
-
-    console.log('[Dashboard] Starting message submission:', userContent)
-
-    // Add user message
-    const userMessage: Message = {
-      id: crypto.randomUUID(),
-      role: 'user',
-      content: userContent,
-      createdAt: new Date(),
-    }
-    setMessages((prev) => [...prev, userMessage])
+    sendMessage(input)
     setInput("")
-
-    setIsStreaming(true)
-    setStreamingContent('')
-
-    try {
-      console.log('[Dashboard] Building messages for stream...')
-      const allMessages = buildMessagesForStream(
-        messages,
-        userContent,
-        undefined,
-        false,
-        'gemini'
-      )
-      console.log('[Dashboard] Messages built:', allMessages.length, 'messages')
-
-      let fullContent = ''
-
-      console.log('[Dashboard] Calling streamChatResponse...')
-      const stream = await streamChatResponse({
-        data: {
-          messages: allMessages,
-          model: 'gemini-2.5-flash',
-        },
-      } as any)
-
-      console.log('[Dashboard] Stream received, starting iteration...')
-      for await (const chunk of stream) {
-        console.log('[Dashboard] Chunk received:', chunk)
-        if (chunk.type === 'content') {
-          fullContent = chunk.content
-          setStreamingContent(fullContent)
-        }
-      }
-      console.log('[Dashboard] Stream complete. Final content length:', fullContent.length)
-
-      // Add assistant message
-      const assistantMessage: Message = {
-        id: crypto.randomUUID(),
-        role: 'assistant',
-        content: fullContent,
-        createdAt: new Date(),
-      }
-
-      console.log('[Dashboard] Adding assistant message to state')
-      setMessages((prev) => [...prev, assistantMessage])
-      setStreamingContent('')
-    } catch (error) {
-      console.error('[Dashboard] Streaming error:', error)
-      const errorMessage: Message = {
-        id: crypto.randomUUID(),
-        role: 'assistant',
-        content: "Sorry, I couldn't process your request. Please try again.",
-        createdAt: new Date(),
-      }
-      setMessages((prev) => [...prev, errorMessage])
-    } finally {
-      console.log('[Dashboard] Finalizing - setting isStreaming to false')
-      setIsStreaming(false)
-    }
   }
 
   // Determine if chat should be centered (no messages)
@@ -164,7 +102,7 @@ function RouteComponent() {
                 input={input}
                 setInput={setInput}
                 onSubmit={handleSubmit}
-                isLoading={isStreaming}
+                isLoading={isLoading}
                 projects={allProjects}
                 selectedProject={selectedProject}
                 onProjectChange={setSelectedProject}
@@ -177,9 +115,8 @@ function RouteComponent() {
             {/* Messages */}
             <div className="flex-1 overflow-y-auto p-4">
               <MessageList
-                messages={messages as any}
-                streamingContent={streamingContent}
-                isStreaming={isStreaming}
+                messages={messages as UIMessage[]}
+                isStreaming={isLoading}
               />
             </div>
 
@@ -189,7 +126,7 @@ function RouteComponent() {
                 input={input}
                 setInput={setInput}
                 onSubmit={handleSubmit}
-                isLoading={isStreaming}
+                isLoading={isLoading}
                 projects={allProjects}
                 selectedProject={selectedProject}
                 onProjectChange={setSelectedProject}

@@ -1,6 +1,7 @@
 import { createMiddleware } from '@tanstack/react-start'
 import { getRequest, setResponseStatus } from '@tanstack/react-start/server'
 import { auth } from '@/lib/auth/auth'
+import { redirect } from '@tanstack/react-router'
 
 export const authMiddleware = createMiddleware({
   type: 'request',
@@ -16,7 +17,9 @@ export const authMiddleware = createMiddleware({
 
   if (!session) {
     setResponseStatus(401)
-    throw new Error('Unauthorized')
+    return redirect({
+      to: '/signin',
+    })
   }
   return await next({
     context: {

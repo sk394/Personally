@@ -9,7 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as AiRouteImport } from './routes/ai'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as publicIndexRouteImport } from './routes/(public)/index'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
@@ -28,15 +28,15 @@ import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as DashboardLoanProjectIdIndexRouteImport } from './routes/dashboard/loan/$projectId/index'
 import { Route as DashboardLoanProjectIdSingleLoanIdRouteImport } from './routes/dashboard/loan/$projectId/single/$loanId'
 
-const AiRoute = AiRouteImport.update({
-  id: '/ai',
-  path: '/ai',
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
-  id: '/dashboard/',
-  path: '/dashboard/',
-  getParentRoute: () => rootRouteImport,
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardRoute,
 } as any)
 const publicIndexRoute = publicIndexRouteImport.update({
   id: '/(public)/',
@@ -64,40 +64,40 @@ const authSigninRoute = authSigninRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardSplitwiseIndexRoute = DashboardSplitwiseIndexRouteImport.update({
-  id: '/dashboard/splitwise/',
-  path: '/dashboard/splitwise/',
-  getParentRoute: () => rootRouteImport,
+  id: '/splitwise/',
+  path: '/splitwise/',
+  getParentRoute: () => DashboardRoute,
 } as any)
 const DashboardReminderIndexRoute = DashboardReminderIndexRouteImport.update({
-  id: '/dashboard/reminder/',
-  path: '/dashboard/reminder/',
-  getParentRoute: () => rootRouteImport,
+  id: '/reminder/',
+  path: '/reminder/',
+  getParentRoute: () => DashboardRoute,
 } as any)
 const DashboardProjectsIndexRoute = DashboardProjectsIndexRouteImport.update({
-  id: '/dashboard/projects/',
-  path: '/dashboard/projects/',
-  getParentRoute: () => rootRouteImport,
+  id: '/projects/',
+  path: '/projects/',
+  getParentRoute: () => DashboardRoute,
 } as any)
 const DashboardLoanIndexRoute = DashboardLoanIndexRouteImport.update({
-  id: '/dashboard/loan/',
-  path: '/dashboard/loan/',
-  getParentRoute: () => rootRouteImport,
+  id: '/loan/',
+  path: '/loan/',
+  getParentRoute: () => DashboardRoute,
 } as any)
 const DashboardIncomeIndexRoute = DashboardIncomeIndexRouteImport.update({
-  id: '/dashboard/income/',
-  path: '/dashboard/income/',
-  getParentRoute: () => rootRouteImport,
+  id: '/income/',
+  path: '/income/',
+  getParentRoute: () => DashboardRoute,
 } as any)
 const DashboardExpenseIndexRoute = DashboardExpenseIndexRouteImport.update({
-  id: '/dashboard/expense/',
-  path: '/dashboard/expense/',
-  getParentRoute: () => rootRouteImport,
+  id: '/expense/',
+  path: '/expense/',
+  getParentRoute: () => DashboardRoute,
 } as any)
 const DashboardSplitwiseProjectIdRoute =
   DashboardSplitwiseProjectIdRouteImport.update({
-    id: '/dashboard/splitwise/$projectId',
-    path: '/dashboard/splitwise/$projectId',
-    getParentRoute: () => rootRouteImport,
+    id: '/splitwise/$projectId',
+    path: '/splitwise/$projectId',
+    getParentRoute: () => DashboardRoute,
   } as any)
 const ApiTrpcSplatRoute = ApiTrpcSplatRouteImport.update({
   id: '/api/trpc/$',
@@ -111,25 +111,25 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
 } as any)
 const DashboardLoanProjectIdIndexRoute =
   DashboardLoanProjectIdIndexRouteImport.update({
-    id: '/dashboard/loan/$projectId/',
-    path: '/dashboard/loan/$projectId/',
-    getParentRoute: () => rootRouteImport,
+    id: '/loan/$projectId/',
+    path: '/loan/$projectId/',
+    getParentRoute: () => DashboardRoute,
   } as any)
 const DashboardLoanProjectIdSingleLoanIdRoute =
   DashboardLoanProjectIdSingleLoanIdRouteImport.update({
-    id: '/dashboard/loan/$projectId/single/$loanId',
-    path: '/dashboard/loan/$projectId/single/$loanId',
-    getParentRoute: () => rootRouteImport,
+    id: '/loan/$projectId/single/$loanId',
+    path: '/loan/$projectId/single/$loanId',
+    getParentRoute: () => DashboardRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
-  '/ai': typeof AiRoute
+  '/dashboard': typeof DashboardRouteWithChildren
   '/signin': typeof authSigninRoute
   '/signup': typeof authSignupRoute
   '/verify-email': typeof authVerifyEmailRoute
   '/api/chat': typeof ApiChatRoute
   '/': typeof publicIndexRoute
-  '/dashboard': typeof DashboardIndexRoute
+  '/dashboard/': typeof DashboardIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
   '/dashboard/splitwise/$projectId': typeof DashboardSplitwiseProjectIdRoute
@@ -143,7 +143,6 @@ export interface FileRoutesByFullPath {
   '/dashboard/loan/$projectId/single/$loanId': typeof DashboardLoanProjectIdSingleLoanIdRoute
 }
 export interface FileRoutesByTo {
-  '/ai': typeof AiRoute
   '/signin': typeof authSigninRoute
   '/signup': typeof authSignupRoute
   '/verify-email': typeof authVerifyEmailRoute
@@ -164,7 +163,7 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/ai': typeof AiRoute
+  '/dashboard': typeof DashboardRouteWithChildren
   '/(auth)/signin': typeof authSigninRoute
   '/(auth)/signup': typeof authSignupRoute
   '/(auth)/verify-email': typeof authVerifyEmailRoute
@@ -186,13 +185,13 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/ai'
+    | '/dashboard'
     | '/signin'
     | '/signup'
     | '/verify-email'
     | '/api/chat'
     | '/'
-    | '/dashboard'
+    | '/dashboard/'
     | '/api/auth/$'
     | '/api/trpc/$'
     | '/dashboard/splitwise/$projectId'
@@ -206,7 +205,6 @@ export interface FileRouteTypes {
     | '/dashboard/loan/$projectId/single/$loanId'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/ai'
     | '/signin'
     | '/signup'
     | '/verify-email'
@@ -226,7 +224,7 @@ export interface FileRouteTypes {
     | '/dashboard/loan/$projectId/single/$loanId'
   id:
     | '__root__'
-    | '/ai'
+    | '/dashboard'
     | '/(auth)/signin'
     | '/(auth)/signup'
     | '/(auth)/verify-email'
@@ -247,41 +245,31 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  AiRoute: typeof AiRoute
+  DashboardRoute: typeof DashboardRouteWithChildren
   authSigninRoute: typeof authSigninRoute
   authSignupRoute: typeof authSignupRoute
   authVerifyEmailRoute: typeof authVerifyEmailRoute
   ApiChatRoute: typeof ApiChatRoute
   publicIndexRoute: typeof publicIndexRoute
-  DashboardIndexRoute: typeof DashboardIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiTrpcSplatRoute: typeof ApiTrpcSplatRoute
-  DashboardSplitwiseProjectIdRoute: typeof DashboardSplitwiseProjectIdRoute
-  DashboardExpenseIndexRoute: typeof DashboardExpenseIndexRoute
-  DashboardIncomeIndexRoute: typeof DashboardIncomeIndexRoute
-  DashboardLoanIndexRoute: typeof DashboardLoanIndexRoute
-  DashboardProjectsIndexRoute: typeof DashboardProjectsIndexRoute
-  DashboardReminderIndexRoute: typeof DashboardReminderIndexRoute
-  DashboardSplitwiseIndexRoute: typeof DashboardSplitwiseIndexRoute
-  DashboardLoanProjectIdIndexRoute: typeof DashboardLoanProjectIdIndexRoute
-  DashboardLoanProjectIdSingleLoanIdRoute: typeof DashboardLoanProjectIdSingleLoanIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/ai': {
-      id: '/ai'
-      path: '/ai'
-      fullPath: '/ai'
-      preLoaderRoute: typeof AiRouteImport
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard/': {
       id: '/dashboard/'
-      path: '/dashboard'
-      fullPath: '/dashboard'
+      path: '/'
+      fullPath: '/dashboard/'
       preLoaderRoute: typeof DashboardIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof DashboardRoute
     }
     '/(public)/': {
       id: '/(public)/'
@@ -320,52 +308,52 @@ declare module '@tanstack/react-router' {
     }
     '/dashboard/splitwise/': {
       id: '/dashboard/splitwise/'
-      path: '/dashboard/splitwise'
+      path: '/splitwise'
       fullPath: '/dashboard/splitwise'
       preLoaderRoute: typeof DashboardSplitwiseIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof DashboardRoute
     }
     '/dashboard/reminder/': {
       id: '/dashboard/reminder/'
-      path: '/dashboard/reminder'
+      path: '/reminder'
       fullPath: '/dashboard/reminder'
       preLoaderRoute: typeof DashboardReminderIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof DashboardRoute
     }
     '/dashboard/projects/': {
       id: '/dashboard/projects/'
-      path: '/dashboard/projects'
+      path: '/projects'
       fullPath: '/dashboard/projects'
       preLoaderRoute: typeof DashboardProjectsIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof DashboardRoute
     }
     '/dashboard/loan/': {
       id: '/dashboard/loan/'
-      path: '/dashboard/loan'
+      path: '/loan'
       fullPath: '/dashboard/loan'
       preLoaderRoute: typeof DashboardLoanIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof DashboardRoute
     }
     '/dashboard/income/': {
       id: '/dashboard/income/'
-      path: '/dashboard/income'
+      path: '/income'
       fullPath: '/dashboard/income'
       preLoaderRoute: typeof DashboardIncomeIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof DashboardRoute
     }
     '/dashboard/expense/': {
       id: '/dashboard/expense/'
-      path: '/dashboard/expense'
+      path: '/expense'
       fullPath: '/dashboard/expense'
       preLoaderRoute: typeof DashboardExpenseIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof DashboardRoute
     }
     '/dashboard/splitwise/$projectId': {
       id: '/dashboard/splitwise/$projectId'
-      path: '/dashboard/splitwise/$projectId'
+      path: '/splitwise/$projectId'
       fullPath: '/dashboard/splitwise/$projectId'
       preLoaderRoute: typeof DashboardSplitwiseProjectIdRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof DashboardRoute
     }
     '/api/trpc/$': {
       id: '/api/trpc/$'
@@ -383,31 +371,36 @@ declare module '@tanstack/react-router' {
     }
     '/dashboard/loan/$projectId/': {
       id: '/dashboard/loan/$projectId/'
-      path: '/dashboard/loan/$projectId'
+      path: '/loan/$projectId'
       fullPath: '/dashboard/loan/$projectId'
       preLoaderRoute: typeof DashboardLoanProjectIdIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof DashboardRoute
     }
     '/dashboard/loan/$projectId/single/$loanId': {
       id: '/dashboard/loan/$projectId/single/$loanId'
-      path: '/dashboard/loan/$projectId/single/$loanId'
+      path: '/loan/$projectId/single/$loanId'
       fullPath: '/dashboard/loan/$projectId/single/$loanId'
       preLoaderRoute: typeof DashboardLoanProjectIdSingleLoanIdRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof DashboardRoute
     }
   }
 }
 
-const rootRouteChildren: RootRouteChildren = {
-  AiRoute: AiRoute,
-  authSigninRoute: authSigninRoute,
-  authSignupRoute: authSignupRoute,
-  authVerifyEmailRoute: authVerifyEmailRoute,
-  ApiChatRoute: ApiChatRoute,
-  publicIndexRoute: publicIndexRoute,
+interface DashboardRouteChildren {
+  DashboardIndexRoute: typeof DashboardIndexRoute
+  DashboardSplitwiseProjectIdRoute: typeof DashboardSplitwiseProjectIdRoute
+  DashboardExpenseIndexRoute: typeof DashboardExpenseIndexRoute
+  DashboardIncomeIndexRoute: typeof DashboardIncomeIndexRoute
+  DashboardLoanIndexRoute: typeof DashboardLoanIndexRoute
+  DashboardProjectsIndexRoute: typeof DashboardProjectsIndexRoute
+  DashboardReminderIndexRoute: typeof DashboardReminderIndexRoute
+  DashboardSplitwiseIndexRoute: typeof DashboardSplitwiseIndexRoute
+  DashboardLoanProjectIdIndexRoute: typeof DashboardLoanProjectIdIndexRoute
+  DashboardLoanProjectIdSingleLoanIdRoute: typeof DashboardLoanProjectIdSingleLoanIdRoute
+}
+
+const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardIndexRoute: DashboardIndexRoute,
-  ApiAuthSplatRoute: ApiAuthSplatRoute,
-  ApiTrpcSplatRoute: ApiTrpcSplatRoute,
   DashboardSplitwiseProjectIdRoute: DashboardSplitwiseProjectIdRoute,
   DashboardExpenseIndexRoute: DashboardExpenseIndexRoute,
   DashboardIncomeIndexRoute: DashboardIncomeIndexRoute,
@@ -418,6 +411,21 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardLoanProjectIdIndexRoute: DashboardLoanProjectIdIndexRoute,
   DashboardLoanProjectIdSingleLoanIdRoute:
     DashboardLoanProjectIdSingleLoanIdRoute,
+}
+
+const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
+  DashboardRouteChildren,
+)
+
+const rootRouteChildren: RootRouteChildren = {
+  DashboardRoute: DashboardRouteWithChildren,
+  authSigninRoute: authSigninRoute,
+  authSignupRoute: authSignupRoute,
+  authVerifyEmailRoute: authVerifyEmailRoute,
+  ApiChatRoute: ApiChatRoute,
+  publicIndexRoute: publicIndexRoute,
+  ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiTrpcSplatRoute: ApiTrpcSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

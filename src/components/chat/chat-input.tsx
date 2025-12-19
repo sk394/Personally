@@ -7,24 +7,22 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Textarea } from "@/components/ui/textarea";
+import { CreateNewProjectDialog } from "@/features/project/create-new-project-dialog";
 import { cn } from "@/lib/utils";
+import { Link } from "@tanstack/react-router";
 import {
-    Zap,
     ChevronDown,
     Circle,
-    Loader,
-    Cloud,
-    Code,
     Laptop,
-    History,
     Paperclip,
     Plus,
     Bot,
     Send,
     User,
-    Wand2,
-    Globe,
     FolderKanban,
+    ChevronRight,
+    Folders,
+    AudioLines,
 } from "lucide-react";
 import { useRef, useState } from "react";
 
@@ -47,9 +45,8 @@ export default function ChatInput({
     selectedProject,
     onProjectChange
 }: ChatInputProps) {
-    const [selectedModel, setSelectedModel] = useState("Local");
+    const [newProjectOpen, setNewProjectOpen] = useState(false);
     const [selectedAgent, setSelectedAgent] = useState("Agent");
-    const [selectedPerformance, setSelectedPerformance] = useState("High");
     const [autoMode, setAutoMode] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -119,7 +116,10 @@ export default function ChatInput({
                                 <DropdownMenuGroup className="space-y-1">
                                     <DropdownMenuItem
                                         className="rounded-[calc(1rem-6px)] text-xs"
-                                        onClick={() => fileInputRef.current?.click()}
+                                        onClick={() => {
+                                            alert("Image upload is not implemented yet.");
+                                        }}
+                                    // onClick={() => fileInputRef.current?.click()}
                                     >
                                         <Paperclip size={16} className="opacity-60" />
                                         Attach Files
@@ -127,49 +127,61 @@ export default function ChatInput({
                                     <DropdownMenuItem
                                         className="rounded-[calc(1rem-6px)] text-xs"
                                         onClick={() => {
-                                            console.log("Code Interpreter selected");
+                                            alert("Voice mode is not implemented yet.");
                                         }}
                                     >
-                                        <Code size={16} className="opacity-60" />
-                                        Code Interpreter
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem
-                                        className="rounded-[calc(1rem-6px)] text-xs"
-                                        onClick={() => {
-                                            console.log("Web Search selected");
-                                        }}
-                                    >
-                                        <Globe size={16} className="opacity-60" />
-                                        Web Search
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem
-                                        className="rounded-[calc(1rem-6px)] text-xs"
-                                        onClick={() => {
-                                            console.log("Chat History selected");
-                                        }}
-                                    >
-                                        <History size={16} className="opacity-60" />
-                                        Chat History
+                                        <AudioLines size={16} className="opacity-60" />
+                                        Voice Mode
                                     </DropdownMenuItem>
                                 </DropdownMenuGroup>
                             </DropdownMenuContent>
                         </DropdownMenu>
-
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setAutoMode(!autoMode)}
-                            className={cn(
-                                "h-7 px-2 rounded-full border border-border hover:bg-accent ",
-                                {
-                                    "bg-primary/10 text-primary border-primary/30": autoMode,
-                                    "text-muted-foreground": !autoMode,
-                                }
-                            )}
-                        >
-                            <Wand2 className="size-3" />
-                            <span className="text-xs">Auto</span>
-                        </Button>
+                        {projects.length > 0 && (
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => setAutoMode(!autoMode)}
+                                        className={cn(
+                                            "h-7 px-2 pl-1 rounded-full border border-border hover:bg-accent ",
+                                            {
+                                                "bg-primary/10 text-primary border-primary/30": autoMode,
+                                                "text-muted-foreground": !autoMode,
+                                            }
+                                        )}
+                                    >
+                                        <FolderKanban className="size-3" />
+                                        <span className="text-xs">{selectedProjectTitle}</span>
+                                        <ChevronDown className="size-3" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent
+                                    align="start"
+                                    className="max-w-xs rounded-2xl p-1.5 bg-popover border-border"
+                                >
+                                    <DropdownMenuGroup className="space-y-1">
+                                        <DropdownMenuItem
+                                            className="rounded-[calc(1rem-6px)] text-xs"
+                                            onClick={() => onProjectChange?.(null)}
+                                        >
+                                            <Circle size={16} className="opacity-60" />
+                                            No Project
+                                        </DropdownMenuItem>
+                                        {projects.map((project) => (
+                                            <DropdownMenuItem
+                                                key={project.id}
+                                                className="rounded-[calc(1rem-6px)] text-xs"
+                                                onClick={() => onProjectChange?.(project.id)}
+                                            >
+                                                <FolderKanban size={16} className="opacity-60" />
+                                                {project.title}
+                                            </DropdownMenuItem>
+                                        ))}
+                                    </DropdownMenuGroup>
+                                </DropdownMenuContent>
+                            </DropdownMenu>)
+                        }
                     </div>
 
                     <div>
@@ -186,80 +198,31 @@ export default function ChatInput({
             </div>
 
             <div className="flex items-center gap-0 pt-2">
-                {projects.length > 0 && (
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                className="h-6 px-2 rounded-full border border-transparent hover:bg-accent text-muted-foreground text-xs"
-                            >
-                                <FolderKanban className="size-3" />
-                                <span>{selectedProjectTitle}</span>
-                                <ChevronDown className="size-3" />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent
-                            align="start"
-                            className="max-w-xs rounded-2xl p-1.5 bg-popover border-border"
-                        >
-                            <DropdownMenuGroup className="space-y-1">
-                                <DropdownMenuItem
-                                    className="rounded-[calc(1rem-6px)] text-xs"
-                                    onClick={() => onProjectChange?.(null)}
-                                >
-                                    <Circle size={16} className="opacity-60" />
-                                    No Project
-                                </DropdownMenuItem>
-                                {projects.map((project) => (
-                                    <DropdownMenuItem
-                                        key={project.id}
-                                        className="rounded-[calc(1rem-6px)] text-xs"
-                                        onClick={() => onProjectChange?.(project.id)}
-                                    >
-                                        <FolderKanban size={16} className="opacity-60" />
-                                        {project.title}
-                                    </DropdownMenuItem>
-                                ))}
-                            </DropdownMenuGroup>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                )}
-
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
+                <div>
+                    <Link to="/dashboard/projects">
                         <Button
                             variant="ghost"
                             size="sm"
                             className="h-6 px-2 rounded-full border border-transparent hover:bg-accent text-muted-foreground text-xs"
                         >
-                            <Laptop className="size-3" />
-                            <span>{selectedModel}</span>
-                            <ChevronDown className="size-3" />
+                            <Folders className="size-3" />
+                            <span>Projects</span>
+                            <ChevronRight className="size-3" />
                         </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent
-                        align="start"
-                        className="max-w-xs rounded-2xl p-1.5 bg-popover border-border"
+                    </Link>
+                </div>
+                <div>
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 px-2 rounded-full border border-transparent hover:bg-accent text-muted-foreground text-xs"
+                        onClick={() => setNewProjectOpen(true)}
                     >
-                        <DropdownMenuGroup className="space-y-1">
-                            <DropdownMenuItem
-                                className="rounded-[calc(1rem-6px)] text-xs"
-                                onClick={() => setSelectedModel("Local")}
-                            >
-                                <Laptop size={16} className="opacity-60" />
-                                Local
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                                className="rounded-[calc(1rem-6px)] text-xs"
-                                onClick={() => setSelectedModel("Cloud")}
-                            >
-                                <Cloud size={16} className="opacity-60" />
-                                Cloud
-                            </DropdownMenuItem>
-                        </DropdownMenuGroup>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                        <Laptop className="size-3" />
+                        <span>New Project</span>
+                        <ChevronRight className="size-3" />
+                    </Button>
+                </div>
 
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -280,59 +243,17 @@ export default function ChatInput({
                         <DropdownMenuGroup className="space-y-1">
                             <DropdownMenuItem
                                 className="rounded-[calc(1rem-6px)] text-xs"
-                                onClick={() => setSelectedAgent("Agent")}
+                                onClick={() => setSelectedAgent("ChatGPT")}
                             >
                                 <User size={16} className="opacity-60" />
-                                Agent
+                                ChatGPT
                             </DropdownMenuItem>
                             <DropdownMenuItem
                                 className="rounded-[calc(1rem-6px)] text-xs"
-                                onClick={() => setSelectedAgent("Assistant")}
+                                onClick={() => setSelectedAgent("Gemini")}
                             >
                                 <Bot size={16} className="opacity-60" />
-                                Assistant
-                            </DropdownMenuItem>
-                        </DropdownMenuGroup>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-6 px-2 rounded-full border border-transparent hover:bg-accent text-muted-foreground text-xs"
-                        >
-                            <Zap className="size-3" />
-                            <span>{selectedPerformance}</span>
-                            <ChevronDown className="size-3" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent
-                        align="start"
-                        className="max-w-xs rounded-2xl p-1.5 bg-popover border-border"
-                    >
-                        <DropdownMenuGroup className="space-y-1">
-                            <DropdownMenuItem
-                                className="rounded-[calc(1rem-6px)] text-xs"
-                                onClick={() => setSelectedPerformance("High")}
-                            >
-                                <Circle size={16} className="opacity-60" />
-                                High
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                                className="rounded-[calc(1rem-6px)] text-xs"
-                                onClick={() => setSelectedPerformance("Medium")}
-                            >
-                                <Loader size={16} className="opacity-60" />
-                                Medium
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                                className="rounded-[calc(1rem-6px)] text-xs"
-                                onClick={() => setSelectedPerformance("Low")}
-                            >
-                                <Circle size={16} className="opacity-60" />
-                                Low
+                                Gemini
                             </DropdownMenuItem>
                         </DropdownMenuGroup>
                     </DropdownMenuContent>
@@ -340,6 +261,10 @@ export default function ChatInput({
 
                 <div className="flex-1" />
             </div>
+            <CreateNewProjectDialog
+                open={newProjectOpen}
+                onOpenChange={setNewProjectOpen}
+            />
         </div>
     );
 }

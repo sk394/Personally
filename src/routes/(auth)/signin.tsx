@@ -1,24 +1,22 @@
-import { Link, createFileRoute, redirect, useNavigate  } from '@tanstack/react-router'
+import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
 import z from 'zod'
 import { toast } from 'sonner'
-import { getRequest } from '@tanstack/react-start/server'
 import { FieldGroup } from '@/components/ui/field'
-import { cn } from '@/lib/utils'
 import { authClient } from '@/lib/auth/auth-client'
 import { useAppForm } from '@/hooks/personally.form'
 
 export const Route = createFileRoute('/(auth)/signin')({
   component: SigninPage,
   ssr: true,
-  beforeLoad: async () => {
-    'use server'
-    const request = getRequest()
-    const { getSessionUser } = await import('@/lib/utils.server')
-    const user = getSessionUser(request)
-    if (user) {
-      throw redirect({ to: '/dashboard' })
-    }
-  },
+  // beforeLoad: async () => {
+  //   'use server'
+  //   const request = getRequest()
+  //   const { getSessionUser } = await import('@/lib/utils.server')
+  //   const user = getSessionUser(request)
+  //   if (user) {
+  //     throw redirect({ to: '/dashboard' })
+  //   }
+  // },
 })
 
 const signInSchema = z.object({
@@ -92,22 +90,11 @@ function SigninPage() {
               )}
             </form.AppField>
           </FieldGroup>
-          <div className="flex justify-start mt-2">
+          <div className="flex justify-start mt-4">
             <form.AppForm>
               <form.SubmitButton label="Submit" />
             </form.AppForm>
           </div>
-
-          {/* <form.Subscribe
-                        selector={(state) => [state.canSubmit, state.isSubmitting]}
-                        children={([canSubmit, isSubmitting]) => (
-                            <ButtonGroup>
-                                <Button type="submit" form="signin-form" className="group/btn relative block h-10 w-full rounded-md bg-gradient-to-br from-black to-neutral-600 font-medium text-white shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:bg-zinc-800 dark:from-zinc-900 dark:to-zinc-900 dark:shadow-[0px_1px_0px_0px_#27272a_inset,0px_-1px_0px_0px_#27272a_inset]" disabled={!canSubmit}>
-                                    {isSubmitting ? <Spinner /> : 'Sign in'}
-                                </Button>
-                            </ButtonGroup>
-                        )}
-                    /> */}
         </form>
 
         <div className="text-center text-sm">
@@ -121,16 +108,3 @@ function SigninPage() {
   )
 }
 
-export const LabelInputContainer = ({
-  children,
-  className,
-}: {
-  children: React.ReactNode
-  className?: string
-}) => {
-  return (
-    <div className={cn('flex w-full flex-col space-y-2', className)}>
-      {children}
-    </div>
-  )
-}

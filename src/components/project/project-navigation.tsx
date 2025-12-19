@@ -81,8 +81,8 @@ function ProjectCard({ project }: ProjectCardProps) {
 
   return (
     <Card className="hover:shadow-lg transition-shadow group">
-      <CardHeader className="pb-3">
-        <div className="flex items-start justify-between">
+      <CardHeader className="pb-3 py-2">
+        <div className="flex w-full items-start justify-between">
           <div className="flex items-center gap-3">
             <div className={`p-2 rounded-lg ${getProjectColor()}`}>
               {getProjectIcon()}
@@ -104,7 +104,9 @@ function ProjectCard({ project }: ProjectCardProps) {
               </div>
             </div>
           </div>
-          <ProjectActions project={project} compact />
+          <div className="flex">
+            <ProjectActions project={project} compact />
+          </div>
         </div>
       </CardHeader>
       <CardContent className="pt-0">

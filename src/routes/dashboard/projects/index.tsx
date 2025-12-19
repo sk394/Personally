@@ -11,7 +11,6 @@ import { Separator } from '@/components/ui/separator'
 import { ProjectNavigation } from '@/components/project/project-navigation'
 import {
   ProjectFilter,
-  QuickFilterTabs,
 } from '@/components/project/project-filter'
 import { CreateNewProjectDialog } from '@/features/project/create-new-project-dialog'
 import { useTRPC } from '@/integrations/trpc/react'
@@ -48,9 +47,7 @@ function RouteComponent() {
     'splitwise',
     'general',
   ])
-  const [quickFilterType, setQuickFilterType] = useState<
-    ProjectType | 'all'
-  >('all')
+
   const [searchQuery, setSearchQuery] = useState('')
 
   const { data: projectsData, isLoading } = useQuery(
@@ -60,17 +57,23 @@ function RouteComponent() {
   // Combine owned and member projects
   const allProjects = useMemo(() => {
     if (!projectsData) return []
-    return [
-      ...projectsData.owned.map((p) => ({
-        id: p.id,
-        title: p.title,
-        description: p.description || undefined,
-        projectType: p.projectType,
-        userRole: 'owner' as const,
-        memberCount: 1,
-        updatedAt: p.updated_at || undefined,
-      })),
-      ...projectsData.member.map((p) => ({
+
+    const ownedProjects = projectsData.owned.map((p) => ({
+      id: p.id,
+      title: p.title,
+      description: p.description || undefined,
+      projectType: p.projectType,
+      userRole: 'owner' as const,
+      memberCount: 1,
+      updatedAt: p.updated_at || undefined,
+    }))
+
+    // Get IDs of owned projects to filter them out from member projects
+    const ownedProjectIds = new Set(ownedProjects.map(p => p.id))
+
+    const memberProjects = projectsData.member
+      .filter((p) => !ownedProjectIds.has(p.id)) // Exclude projects already in owned
+      .map((p) => ({
         id: p.id,
         title: p.title,
         description: p.description || undefined,
@@ -78,8 +81,9 @@ function RouteComponent() {
         userRole: p.role as 'owner' | 'admin' | 'member',
         memberCount: 1,
         updatedAt: p.updated_at || undefined,
-      })),
-    ]
+      }))
+
+    return [...ownedProjects, ...memberProjects]
   }, [projectsData])
 
   // Calculate project counts
@@ -98,16 +102,10 @@ function RouteComponent() {
 
   // Filter projects
   const filteredProjects = useMemo(() => {
-    let filtered = allProjects
+    let filtered = allProjects;
 
-    // Apply quick filter
-    if (quickFilterType !== 'all') {
-      filtered = filtered.filter((p) => p.projectType === quickFilterType)
-    } else {
-      // Apply multi-select filter only when not using quick filter
-      if (selectedTypes.length > 0 && selectedTypes.length < 3) {
-        filtered = filtered.filter((p) => selectedTypes.includes(p.projectType))
-      }
+    if (selectedTypes.length > 0 && selectedTypes.length < 3) {
+      filtered = filtered.filter((p) => selectedTypes.includes(p.projectType))
     }
 
     // Apply search filter
@@ -121,12 +119,12 @@ function RouteComponent() {
     }
 
     return filtered
-  }, [allProjects, selectedTypes, quickFilterType, searchQuery])
+  }, [allProjects, selectedTypes, searchQuery])
 
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header */}
-      <div className="flex-1 flex items-center justify-center px-4 py-2 sm:py-10">
+      <div className="flex-1 flex items-center justify-center px-4 py-1 sm:py-10">
         <div className="w-full max-w-2xl items-center justify-center flex">
           <PersonallyLogo width="350" height="40" />
         </div>
@@ -155,15 +153,6 @@ function RouteComponent() {
           </Button>
         </div>
 
-        {/* Quick Filter Tabs */}
-        <div className="mb-6">
-          <QuickFilterTabs
-            selectedType={quickFilterType}
-            onTypeChange={setQuickFilterType}
-            projectCounts={projectCounts}
-          />
-        </div>
-
         {/* Search and Filter Bar */}
         <div className="flex flex-col gap-4 mb-6 sm:flex-row sm:items-center">
           <div className="relative flex-1">
@@ -183,7 +172,7 @@ function RouteComponent() {
         </div>
 
         {/* Results Summary */}
-        {(searchQuery || quickFilterType !== 'all' || selectedTypes.length < 3) && (
+        {(searchQuery || selectedTypes.length < 3) && (
           <div className="mb-4 text-sm text-muted-foreground">
             Showing {filteredProjects.length} of {allProjects.length} projects
             {searchQuery && (

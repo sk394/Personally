@@ -80,7 +80,7 @@ export function CreateNewProjectDialog({
   const createProjectMutation = useMutation(
     trpc.project.create.mutationOptions({
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['project'] })
+        queryClient.invalidateQueries({ queryKey: [['project', 'getAll']] })
         setIsComplete(true)
         setTimeout(() => {
           onOpenChange(false)

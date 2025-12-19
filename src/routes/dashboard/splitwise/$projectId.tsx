@@ -9,11 +9,9 @@ import {
   Loader2,
   Plus,
   Receipt,
-  Trash2,
   UserPlus,
   Users,
   ArrowLeft,
-  CheckCircle2,
   Clock,
   BadgeCheckIcon,
 } from 'lucide-react'
@@ -31,19 +29,8 @@ import { SettlementDialog } from '@/features/splitwise/settlement-dialog'
 import { InviteMemberDialog } from '@/features/splitwise/invite-member-dialog'
 import { SettingsDialog } from '@/features/splitwise/settings-dialog'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog'
 import { Link } from '@tanstack/react-router'
-import { Badge } from '@/components/ui/badge'
+
 
 const authStateFn = createServerFn({ method: 'GET' }).handler(async ({ }) => {
   const session = await auth.api.getSession({ headers: getRequest().headers })
@@ -222,9 +209,8 @@ function RouteComponent() {
       ?.filter((b) => b.fromUserId === userId)
       .reduce((acc, curr) => acc + (curr.accruedInterest || 0), 0) || 0
 
-  if (!settlements || settlements.length === 0) return null
-  const hasMoreThanFive = settlements.length > 3
-  const visibleSettlements = showAllSettlements ? settlements : settlements.slice(0, 3)
+  const hasMoreThanFive = settlements && settlements.length > 3
+  const visibleSettlements = showAllSettlements ? settlements : settlements?.slice(0, 3)
 
   return (
     <div className="container mx-auto p-6 max-w-5xl">
@@ -245,7 +231,7 @@ function RouteComponent() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
         <div>
           <div className="flex items-center gap-3 mb-2">
-            <Link to="/dashboard">
+            <Link to="/dashboard/projects">
               <Button variant="ghost" size="sm">
                 <ArrowLeft className="size-4 mr-2" />
                 Dashboard
@@ -377,7 +363,7 @@ function RouteComponent() {
                   )}
                 </div>
                 <div className="space-y-2">
-                  {visibleSettlements.map((settlement) => {
+                  {visibleSettlements?.map((settlement) => {
                     const isPayer = settlement.fromUserId === userId
                     const otherUser = isPayer
                       ? settlement.receiver

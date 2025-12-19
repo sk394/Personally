@@ -7,6 +7,7 @@ import * as TanstackQuery from './integrations/tanstack-query/root-provider'
 
 // Import the generated route tree
 import { routeTree } from './routeTree.gen'
+import PersonallyLogo from '@/components/logo'
 
 // Create a new router instance
 export function getRouter() {
@@ -27,7 +28,13 @@ export function getRouter() {
     defaultPreload: 'intent',
     defaultViewTransition: true,
     defaultErrorComponent: ({ error }) => <ErrorComponent error={error} />,
-    defaultPendingComponent: () => <div>Loading...</div>,
+    defaultPendingComponent: () => (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-full text-center space-y-4">
+          <PersonallyLogo width="350" height="40" />
+        </div>
+      </div>
+    ),
     Wrap: (props: { children: React.ReactNode }) => (
       <TanstackQuery.Provider queryClient={queryClient}>
         {props.children}

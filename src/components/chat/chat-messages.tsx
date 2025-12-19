@@ -1,12 +1,7 @@
 import { Bot } from 'lucide-react'
-import { MessageBubble, TypingIndicator, StreamingMessage } from './chat-message-helper'
+import { MessageBubble, TypingIndicator } from './chat-message-helper'
+import type { UIMessage } from '@tanstack/ai-react'
 
-type Message = {
-    id: string
-    role: 'user' | 'assistant'
-    content: string
-    createdAt: Date
-}
 
 interface EmptyChatStateProps {
     onToggleSidebar?: () => void
@@ -27,25 +22,19 @@ export function EmptyChatState({ }: EmptyChatStateProps) {
 }
 
 interface MessageListProps {
-    messages: Message[]
-    streamingContent: string
+    messages: UIMessage[]
     isStreaming: boolean
 }
 
 export function MessageList({
     messages,
-    streamingContent,
     isStreaming,
 }: MessageListProps) {
     return (
         <div className="space-y-6 pb-4">
             {messages.map((message) => (
-                <MessageBubble key={message.id} message={message} />
+                <MessageBubble key={message.id} message={message} isStreaming={isStreaming} />
             ))}
-            {isStreaming && streamingContent && (
-                <StreamingMessage content={streamingContent} />
-            )}
-            {isStreaming && !streamingContent && <TypingIndicator />}
         </div>
     )
 }

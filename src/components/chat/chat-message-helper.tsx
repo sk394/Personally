@@ -1,96 +1,78 @@
-import { useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import type { UIMessage } from '@tanstack/ai-react';
 
-type Message = {
-    id: string
-    role: 'user' | 'assistant'
-    content: string
-    createdAt: Date
-}
 
-// Image preview modal
-function ImagePreview({ src, alt, onClose }: { src: string; alt: string; onClose: () => void }) {
+export function MessageBubble({ message, isStreaming }: { message: UIMessage, isStreaming?: boolean }) {
     return (
         <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
-            onClick={onClose}
+            className={`flex flex-col ${message.role === "assistant" ? "items-start" : "items-end"
+                }`}
         >
-            <img
-                src={src}
-                alt={alt}
-                className="max-w-full max-h-full rounded-lg object-contain"
-                onClick={(e) => e.stopPropagation()}
-            />
-        </div>
-    )
-}
-
-export function MessageBubble({ message }: { message: Message }) {
-    const isUser = message.role === 'user'
-    const [previewImage, setPreviewImage] = useState<{ src: string; alt: string } | null>(null)
-
-    const textContent = message.content
-
-    if (isUser) {
-        return (
-            <>
-                {/* Image preview modal */}
-                {previewImage && (
-                    <ImagePreview
-                        src={previewImage.src}
-                        alt={previewImage.alt}
-                        onClose={() => setPreviewImage(null)}
-                    />
-                )}
-
-                <div className="flex flex-col items-end gap-2">
-                    {/* Text message bubble */}
-                    <div className="rounded-2xl px-4 py-3 max-w-[80%] text-sm bg-primary text-primary-foreground">
-                        <p className="whitespace-pre-wrap">{textContent}</p>
-                    </div>
+            <div className={`max-w-[85%] rounded-2xl px-4 py-3 ${message.role === "assistant"
+                ? "bg-gray-100 text-gray-800"
+                : "bg-blue-600 text-white"
+                }`}>
+                <div className="text-xs font-bold mb-1 opacity-50 uppercase tracking-wider">
+                    {message.role === "assistant" ? "Assistant" : "You"}
                 </div>
-            </>
-        )
-    }
-
-    // Assistant message with Markdown rendering
-    return (
-        <div className="max-w-[85%]">
-            <div className="prose prose-sm dark:prose-invert max-w-none">
-                <ReactMarkdown
-                    remarkPlugins={[remarkGfm]}
-                    components={{
-                        h1: ({ ...props }) => <h1 className="text-2xl font-bold mt-6 mb-4" {...props} />,
-                        h2: ({ ...props }) => <h2 className="text-xl font-bold mt-5 mb-3" {...props} />,
-                        h3: ({ ...props }) => <h3 className="text-lg font-semibold mt-4 mb-2" {...props} />,
-                        p: ({ ...props }) => <p className="mb-4 leading-relaxed" {...props} />,
-                        ul: ({ ...props }) => <ul className="list-disc list-inside mb-4 space-y-1" {...props} />,
-                        ol: ({ ...props }) => <ol className="list-decimal list-inside mb-4 space-y-1" {...props} />,
-                        li: ({ ...props }) => <li className="ml-2" {...props} />,
-                        code: ({ className, children, ...props }: any) => {
-                            const isInline = !className
-                            return isInline ? (
-                                <code className="bg-muted px-1.5 py-0.5 rounded text-sm font-mono" {...props}>
-                                    {children}
-                                </code>
-                            ) : (
-                                <code className="block bg-muted p-3 rounded-lg overflow-x-auto text-sm font-mono my-4" {...props}>
-                                    {children}
-                                </code>
-                            )
-                        },
-                        pre: ({ ...props }) => <pre className="my-4" {...props} />,
-                        blockquote: ({ ...props }) => (
-                            <blockquote className="border-l-4 border-border pl-4 italic my-4 text-muted-foreground" {...props} />
-                        ),
-                    }}
-                >
-                    {textContent}
-                </ReactMarkdown>
+                {isStreaming ? <TypingIndicator /> : null}
+                <div className="prose prose-sm max-w-none dark:prose-invert">
+                    {message.parts.map((part, idx) => {
+                        if (part.type === "thinking") {
+                            return (
+                                <div
+                                    key={idx}
+                                    className="text-sm text-gray-500 italic mb-2 flex items-center gap-2"
+                                >
+                                    <span className="animate-pulse">💭</span>
+                                    <span>Thinking... {typeof part.content === 'string' ? part.content : JSON.stringify(part.content)}</span>
+                                </div>
+                            );
+                        }
+                        // if (part.type === "tool-call") {
+                        //     return <div>🔄 Waiting for arguments...</div>;
+                        // }
+                        if (part.type === "text") {
+                            return <ReactMarkdown
+                                components={{
+                                    h1: ({ ...props }) => <h1 className="text-2xl font-bold mt-6 mb-4" {...props} />,
+                                    h2: ({ ...props }) => <h2 className="text-xl font-bold mt-5 mb-3" {...props} />,
+                                    h3: ({ ...props }) => <h3 className="text-lg font-semibold mt-4 mb-2" {...props} />,
+                                    p: ({ ...props }) => <p className="mb-4 leading-relaxed" {...props} />,
+                                    ul: ({ ...props }) => <ul className="list-disc list-inside mb-4 space-y-1" {...props} />,
+                                    ol: ({ ...props }) => <ol className="list-decimal list-inside mb-4 space-y-1" {...props} />,
+                                    li: ({ ...props }) => <li className="ml-2" {...props} />,
+                                    code: ({ className, children, ...props }: any) => {
+                                        const isInline = !className
+                                        return isInline ? (
+                                            <code className="bg-muted px-1.5 py-0.5 rounded text-sm font-mono" {...props}>
+                                                {children}
+                                            </code>
+                                        ) : (
+                                            <code className="block bg-muted p-3 rounded-lg overflow-x-auto text-sm font-mono my-4" {...props}>
+                                                {children}
+                                            </code>
+                                        )
+                                    },
+                                    pre: ({ ...props }) => <pre className="my-4" {...props} />,
+                                    blockquote: ({ ...props }) => (
+                                        <blockquote className="border-l-4 border-border pl-4 italic my-4 text-muted-foreground" {...props} />
+                                    ),
+                                    a: ({ ...props }) => <a href={props.href} className="text-blue-600 hover:underline">{props.children}</a>,
+                                    img: ({ ...props }) => <img className="max-w-full h-auto" {...props} />
+                                }}
+                                key={idx}
+                                remarkPlugins={[remarkGfm]}>
+                                {part.content}
+                            </ReactMarkdown>;
+                        }
+                        return null;
+                    })}
+                </div>
             </div>
         </div>
-    )
+    );
 }
 
 export function TypingIndicator() {
@@ -101,42 +83,3 @@ export function TypingIndicator() {
     )
 }
 
-export function StreamingMessage({ content }: { content: string }) {
-    return (
-        <div className="max-w-[85%]">
-            <div className="prose prose-sm dark:prose-invert max-w-none">
-                <ReactMarkdown
-                    remarkPlugins={[remarkGfm]}
-                    components={{
-                        h1: ({ ...props }) => <h1 className="text-2xl font-bold mt-6 mb-4" {...props} />,
-                        h2: ({ ...props }) => <h2 className="text-xl font-bold mt-5 mb-3" {...props} />,
-                        h3: ({ ...props }) => <h3 className="text-lg font-semibold mt-4 mb-2" {...props} />,
-                        p: ({ ...props }) => <p className="mb-4 leading-relaxed" {...props} />,
-                        ul: ({ ...props }) => <ul className="list-disc list-inside mb-4 space-y-1" {...props} />,
-                        ol: ({ ...props }) => <ol className="list-decimal list-inside mb-4 space-y-1" {...props} />,
-                        li: ({ ...props }) => <li className="ml-2" {...props} />,
-                        code: ({ className, children, ...props }: any) => {
-                            const isInline = !className
-                            return isInline ? (
-                                <code className="bg-muted px-1.5 py-0.5 rounded text-sm font-mono" {...props}>
-                                    {children}
-                                </code>
-                            ) : (
-                                <code className="block bg-muted p-3 rounded-lg overflow-x-auto text-sm font-mono my-4" {...props}>
-                                    {children}
-                                </code>
-                            )
-                        },
-                        pre: ({ ...props }) => <pre className="my-4" {...props} />,
-                        blockquote: ({ ...props }) => (
-                            <blockquote className="border-l-4 border-border pl-4 italic my-4 text-muted-foreground" {...props} />
-                        ),
-                    }}
-                >
-                    {content}
-                </ReactMarkdown>
-                <span className="inline-block w-1.5 h-4 ml-0.5 bg-primary/70 animate-pulse" />
-            </div>
-        </div>
-    )
-}

@@ -1,7 +1,7 @@
-import { createTRPCRouter, protectedProcedure } from '@/integrations/trpc/init'
+import { createTRPCRouter, protectedProcedure, publicProcedure } from '@/integrations/trpc/init'
 
 export const userRouter = createTRPCRouter({
-  getSession: protectedProcedure.query(async ({ ctx }) => {
+  getSession: publicProcedure.query(async ({ ctx }) => {
     return ctx.session
   }),
   getProfile: protectedProcedure.query(async ({ ctx }) => {
