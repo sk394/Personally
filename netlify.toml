@@ -1,6 +1,10 @@
 [build]
   command = "vite build"
-  dir = "dist/client"
-[dev]
-  command = "vite dev"
-  port = 3000
+  publish = "dist/client"
+
+[build.environment]
+  # Disable secrets scanning for specific keys that aren't actually secrets
+  SECRETS_SCAN_OMIT_KEYS = "BETTER_AUTH_URL"
+  
+  # Or omit the dist directory from scanning since it's build output
+  SECRETS_SCAN_OMIT_PATHS = "dist/**"

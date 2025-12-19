@@ -25,7 +25,7 @@ const SYSTEM_MESSAGE = `You are an intelligent loan and project management assis
 - Provide actionable suggestions based on data.`;
 
 async function handler(request: Request) {
-    const apiKey = process.env.VITE_OPENAI_API_KEY || process.env.OPENAI_API_KEY;
+    const apiKey = process.env.OPENAI_API_KEY;
 
     // Check for API key
     if (!apiKey) {
