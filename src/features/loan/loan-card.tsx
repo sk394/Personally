@@ -21,6 +21,7 @@ import {
 import { cn } from '@/lib/utils';
 import { Loan, LoanPayment } from '@/lib/db/schema';
 import { formatCurrency } from '@/lib/utils'
+import { Link } from '@tanstack/react-router';
 
 
 // Type definitions based on your schema
@@ -191,7 +192,12 @@ export default function LoanCard({ loan, onEdit, onDelete, onAddPayment, onViewD
                 <Separator />
                 {/* Recent Activity */}
                 <div>
-                    <div className="font-medium text-sm text-foreground mb-2.5">Recent Activity</div>
+                    <div className="flex flex-row justify-between">
+                        <div className="font-medium text-sm text-foreground mb-2.5">Recent Activity</div>
+                        <Link to="/dashboard/loan/$projectId/single/$loanId" params={{ projectId: loan.projectId, loanId: loan.id }} className="text-xs text-primary text-blue-500 underline">
+                            View All
+                        </Link>
+                    </div>
                     <ul className="space-y-2">
                         {loanPaymentActivity.map((a, i) => (
                             <li key={i} className="flex items-center justify-between gap-2.5 text-sm" title={a.notes || undefined}>
@@ -199,7 +205,7 @@ export default function LoanCard({ loan, onEdit, onDelete, onAddPayment, onViewD
                                     <CheckCircle className={cn('w-3.5 h-3.5', a.isInitial ? (loan.type === 'borrowed' ? 'text-red-500' : 'text-green-500') : "text-green-500")} />
                                     <span className="text-xs text-foreground truncate">
                                         {a.isInitial
-                                            ? `${a.createdBy} ${loan.type} ${loan.contactName} ${formatCurrency(a.amount)}`
+                                            ? `${a.createdBy} ${loan.type} ${loan.type === 'borrowed' ? 'from' : 'to'} ${loan.contactName} ${formatCurrency(a.amount)}`
                                             : `${a.createdBy} paid ${formatCurrency(a.amount)} via ${a.paymentMethod}`
                                         }
                                     </span>

@@ -13,11 +13,20 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog-old'
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from '@/components/ui/drawer'
 import { useAppForm } from '@/hooks/personally.form'
 import { loanOpts } from '@/features/shared-form'
 import { LoanForm } from '@/features/loan/loan-form'
 import { Button } from '@/components/ui/button'
 import { useTRPC } from '@/integrations/trpc/react'
+import { useMediaQuery } from '@/hooks/use-media-query'
 
 interface CreateNewLoanDialogProps {
   open: boolean
@@ -60,7 +69,7 @@ export function CreateNewLoanDialog({
 }: CreateNewLoanDialogProps) {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
-  console.log('CreateNewLoanDialog projectId:', projectId)
+  const isDesktop = useMediaQuery('(min-width: 768px)')
 
   const [isComplete, setIsComplete] = useState(false)
 
@@ -70,11 +79,10 @@ export function CreateNewLoanDialog({
       onSubmit: loanSchema,
     },
     onSubmit: async ({ value }) => {
-      console.log('Submitting loan with values:', value)
       await createLoanMutation.mutateAsync({
         ...value,
         projectId: projectId,
-        principalAmount: Math.round(value.principalAmount * 100), // convert to cents
+        principalAmount: Math.round(value.principalAmount * 100),
       })
     },
   })
@@ -109,90 +117,124 @@ export function CreateNewLoanDialog({
     }
   }
 
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        closeButton={!isComplete}
-        onClose={handleClose}
-        className="max-w-3xl max-h-[90vh] overflow-y-auto"
+  // Form content - shared between Dialog and Drawer
+  const formContent = !isComplete ? (
+    <LoanForm form={form} />
+  ) : (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      className="flex flex-col items-center justify-center text-center py-8"
+    >
+      <motion.div
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{ delay: 0.2, type: 'spring', bounce: 0.5 }}
       >
-        {!isComplete ? (
+        <CheckCircle2 className="size-16 text-green-500 mb-4" />
+      </motion.div>
+      <h3 className="text-xl font-semibold mb-2">Loan Created!</h3>
+      <p className="text-zinc-600 dark:text-zinc-400">
+        Redirecting to loans dashboard...
+      </p>
+    </motion.div>
+  )
+
+  // Footer buttons - shared between Dialog and Drawer
+  const footerButtons = !isComplete && (
+    <>
+      <Button
+        type="button"
+        variant="outline"
+        onClick={handleClose}
+        disabled={createLoanMutation.isPending}
+      >
+        Cancel
+      </Button>
+
+      <Button
+        onClick={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          form.handleSubmit()
+        }}
+        disabled={
+          form.state.isSubmitting || createLoanMutation.isPending
+        }
+      >
+        {createLoanMutation.isPending ? (
           <>
-            <DialogHeader>
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-2"
-              >
-                <Sparkles className="size-6 text-indigo-500" />
-                <DialogTitle>Create New Loan</DialogTitle>
-              </motion.div>
-              <DialogDescription>
-                Track money you've borrowed or lent. Fill in the details below.
-              </DialogDescription>
-            </DialogHeader>
-
-            <DialogBody className="space-y-6">
-              <LoanForm form={form} />
-            </DialogBody>
-
-            <DialogFooter className="border-t border-zinc-200 dark:border-zinc-800">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleClose}
-                disabled={createLoanMutation.isPending}
-              >
-                Cancel
-              </Button>
-
-              <Button
-                onClick={(e) => {
-                  console.log('Form state on submit:', form.state)
-                  e.preventDefault()
-                  e.stopPropagation()
-                  form.handleSubmit()
-                }}
-                disabled={
-                  form.state.isSubmitting || createLoanMutation.isPending
-                }
-              >
-                {createLoanMutation.isPending ? (
-                  <>
-                    <Loader2 className="size-4 animate-spin" />
-                    Creating...
-                  </>
-                ) : (
-                  <>
-                    <DollarSign className="size-4" />
-                    Create Loan
-                  </>
-                )}
-              </Button>
-            </DialogFooter>
+            <Loader2 className="size-4 animate-spin" />
+            Creating...
           </>
         ) : (
-          <DialogBody className="py-12">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="flex flex-col items-center justify-center text-center"
-            >
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.2, type: 'spring', bounce: 0.5 }}
-              >
-                <CheckCircle2 className="size-16 text-green-500 mb-4" />
-              </motion.div>
-              <h3 className="text-xl font-semibold mb-2">Loan Created!</h3>
-              <p className="text-zinc-600 dark:text-zinc-400">
-                Redirecting to loans dashboard...
-              </p>
-            </motion.div>
-          </DialogBody>
+          <>
+            <DollarSign className="size-4" />
+            Create Loan
+          </>
         )}
-      </DialogContent>
-    </Dialog>
+      </Button>
+    </>
+  )
+
+  // Desktop: Dialog
+  if (isDesktop) {
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent
+          closeButton={!isComplete}
+          onClose={handleClose}
+          className="max-w-3xl max-h-[90vh] overflow-y-auto"
+        >
+          <DialogHeader>
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex items-center gap-2"
+            >
+              <Sparkles className="size-6 text-indigo-500" />
+              <DialogTitle>Create New Loan</DialogTitle>
+            </motion.div>
+            <DialogDescription>
+              Track money you've borrowed or lent. Fill in the details below.
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogBody className="space-y-6">
+            {formContent}
+          </DialogBody>
+
+          <DialogFooter className="border-t border-zinc-200 dark:border-zinc-800">
+            {footerButtons}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    )
+  }
+
+  // Mobile: Drawer
+  return (
+    <Drawer open={open} onOpenChange={onOpenChange}>
+      <DrawerContent className="max-h-[90vh]">
+        <div className="w-full max-w-sm">
+          <DrawerHeader className="flex flex-col text-left float-left">
+            <div className="flex items-center gap-2">
+              <Sparkles className="size-6 text-indigo-500" />
+              <DrawerTitle>Create New Loan</DrawerTitle>
+            </div>
+            <DrawerDescription className='ml-8'>
+              Track money you've borrowed or lent.
+            </DrawerDescription>
+          </DrawerHeader>
+        </div>
+        <div className="px-2 pb-4 overflow-y-auto max-h-[60vh]">
+          {formContent}
+        </div>
+
+        <DrawerFooter>
+          {footerButtons}
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
   )
 }

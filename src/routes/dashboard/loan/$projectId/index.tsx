@@ -17,7 +17,6 @@ import {
     Card,
     CardContent,
 } from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
 import { CreateNewLoanDialog } from '@/features/loan/create-new-loan-dialog'
 import { PaymentDialog } from '@/features/loan/payment-dialog'
 import { useTRPC } from '@/integrations/trpc/react'
@@ -179,19 +178,11 @@ function RouteComponent() {
     const isLoading = isLoansLoading
 
     return (
-        <div className="container mx-auto p-6 max-w-7xl">
-            <div className="flex-1 flex items-center justify-center px-4 py-2 sm:py-10">
-                <div className="w-full max-w-2xl items-center justify-center flex">
-                    <PersonallyLogo width="350" height="40" />
+        <div className="container mx-auto px-6 max-w-7xl">
+            <div className="flex items-center justify-center">
+                <div className="items-center w-80 ml-8">
+                    <Link to="/dashboard"><PersonallyLogo width="80%" height="80%" /></Link>
                 </div>
-            </div>
-
-            <div className="relative my-4 flex items-center justify-center overflow-hidden">
-                <Separator className="bg-border/50" />
-                <div className="py-1 px-2 border rounded-full text-center bg-muted text-xs mx-1">
-                    Loan Project
-                </div>
-                <Separator className="bg-border/50" />
             </div>
 
             <div className="flex justify-center mb-6">
@@ -209,14 +200,6 @@ function RouteComponent() {
 
             <div className="flex items-center justify-between mb-6">
                 <div>
-                    <div className="flex items-center gap-3 mb-2">
-                        <Link to="/dashboard">
-                            <Button variant="ghost" size="sm">
-                                <ArrowLeft className="size-4 mr-2" />
-                                Dashboard
-                            </Button>
-                        </Link>
-                    </div>
                     <h1 className="text-3xl font-bold mb-2">{project.title}</h1>
                     <p className="text-muted-foreground">
                         {project.description ||

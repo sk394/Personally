@@ -32,7 +32,6 @@ import { toast } from 'sonner'
 import PersonallyLogo from '@/components/logo'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
 import { useTRPC } from '@/integrations/trpc/react'
 import { auth } from '@/lib/auth/auth'
 import { formatCurrency, formatProperName } from '@/lib/utils'
@@ -40,7 +39,6 @@ import { CreateExpenseDialog } from '@/features/splitwise/create-expense-dialog'
 import { SettlementDialog } from '@/features/splitwise/settlement-dialog'
 import { InviteMemberDialog } from '@/features/splitwise/invite-member-dialog'
 import { SettingsDialog } from '@/features/splitwise/settings-dialog'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Link } from '@tanstack/react-router'
 
 
@@ -225,31 +223,15 @@ function RouteComponent() {
   const visibleSettlements = showAllSettlements ? settlements : settlements?.slice(0, 3)
 
   return (
-    <div className="container mx-auto p-6 max-w-5xl">
-      <div className="flex-1 flex items-center justify-center px-4 py-2 sm:py-6">
-        <div className="w-full max-w-2xl items-center justify-center flex">
-          <PersonallyLogo width="350" height="40" />
+    <div className="container mx-auto px-6  max-w-5xl">
+      <div className="flex items-center justify-center">
+        <div className="items-center w-80 ml-8">
+          <Link to="/dashboard"><PersonallyLogo width="80%" height="80%" /></Link>
         </div>
-      </div>
-
-      <div className="relative my-4 flex items-center justify-center overflow-hidden">
-        <Separator className="bg-border/50" />
-        <div className="py-1 px-2 border rounded-full text-center bg-muted text-xs mx-1">
-          Splitwise Project
-        </div>
-        <Separator className="bg-border/50" />
       </div>
 
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
-        <div>
-          <div className="flex items-center gap-3 mb-2">
-            <Link to="/dashboard/projects">
-              <Button variant="ghost" size="sm">
-                <ArrowLeft className="size-4 mr-2" />
-                Dashboard
-              </Button>
-            </Link>
-          </div>
+        <div className="text-center">
           <h1 className="text-3xl font-bold mb-1">{project.title}</h1>
           <p className="text-muted-foreground">
             {project.description || 'Track shared expenses and settle up.'}
@@ -292,9 +274,9 @@ function RouteComponent() {
         <Card className="bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-900">
           <CardContent className="p-6 flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-green-600 dark:text-green-400 mb-1">
+              <h1 className="text-xl font-semibold text-green-600 dark:text-green-400 mb-1">
                 You are owed
-              </p>
+              </h1>
               <h3 className="text-2xl font-bold text-green-700 dark:text-green-300">
                 {formatCurrency(totalOwedToMe, 'USD')}
               </h3>
@@ -307,9 +289,9 @@ function RouteComponent() {
         <Card className="bg-red-50 dark:bg-red-950/20 border-red-200 dark:border-red-900">
           <CardContent className="p-6 flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-red-600 dark:text-red-400 mb-1">
+              <h1 className="text-xl font-semibold text-red-600 dark:text-red-400 mb-1">
                 You owe
-              </p>
+              </h1>
               <h3 className="text-2xl font-bold text-red-700 dark:text-red-300">
                 {formatCurrency(totalIOwe, 'USD')}
               </h3>
@@ -624,6 +606,7 @@ function RouteComponent() {
         onOpenChange={setExpenseDialogOpen}
         projectId={projectId}
         currentUserId={userId}
+        memberIds={project.members?.map((m) => m.userId) ?? []}
       />
 
       <SettlementDialog

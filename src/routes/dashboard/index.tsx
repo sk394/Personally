@@ -90,9 +90,9 @@ function RouteComponent() {
           // Centered view when no messages
           <div className="flex flex-col items-center justify-center h-screen px-4">
             <div className="w-full max-w-3xl space-y-6">
-              <div className="text-center space-y-2">
-                <div className="mx-auto">
-                  <PersonallyLogo width="350" height="40" />
+              <div className="text-center space-y-1">
+                <div className="mx-auto sm:w-60 md:w-80 lg:w-100">
+                  <PersonallyLogo width="100%" height="60px" />
                 </div>
                 <p className="text-muted-foreground text-sm">
                   How can I help you today?

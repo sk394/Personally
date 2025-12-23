@@ -152,7 +152,7 @@ export function NumberField({
   required?: boolean
   children?: React.ReactNode
 }) {
-  const field = useFieldContext<number>()
+  const field = useFieldContext<number | ''>()
   const errors = useStore(field.store, (state) => state.meta.errors)
 
   return (
@@ -169,9 +169,13 @@ export function NumberField({
         <InputGroupInput
           value={field.state.value}
           type="number"
+          inputMode="decimal"
           placeholder={placeholder}
           onBlur={field.handleBlur}
-          onChange={(e) => field.handleChange(Number(e.target.value))}
+          onChange={(e) => {
+            const v = e.target.value
+            field.handleChange(v === '' ? '' : Number(v))
+          }}
           autoComplete="off"
           autoFocus
           className="text-base h-10"
@@ -321,7 +325,7 @@ export function DateField({
             )}
           </div>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="center" side="bottom">
+        <PopoverContent className="w-auto p-0 overflow-hidden" align="center" collisionPadding={0} avoidCollisions={false}>
           <Calendar
             mode="single"
             selected={
@@ -518,6 +522,7 @@ export function CheckboxField({
           id={label}
           checked={field.state.value}
           onCheckedChange={(checked) => field.handleChange(checked as boolean)}
+          className="border-default-medium rounded-xs bg-neutral-secondary-medium ring-1 ring-brand-soft"
         />
         <div className="flex-1">
           <Label

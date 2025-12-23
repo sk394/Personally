@@ -74,7 +74,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <body suppressHydrationWarning>
         {children}
         <Toaster position="top-center" />
-        <TanStackDevtools
+        {/* {process.env.NODE_ENV === 'development' && <TanStackDevtools
           config={{
             position: 'bottom-right',
           }}
@@ -103,7 +103,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           eventBusConfig={{
             connectToServerBus: true,
           }}
-        />
+        />} */}
         <Scripts />
       </body>
     </html>

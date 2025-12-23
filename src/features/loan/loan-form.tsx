@@ -127,7 +127,7 @@ export const LoanForm = withForm({
             transition={{ duration: 0.3, ease: 'easeOut' }}
             className="space-y-2 overflow-hidden"
           >
-            <div className="mt-1 ">
+            <div className="mt-1 ml-1">
               <form.AppField
                 name="hasInterest"
                 listeners={{

@@ -25,7 +25,7 @@ export const loanOpts = formOptions({
     type: 'borrowed' as 'borrowed' | 'lent',
     contactName: '',
     contactEmail: '',
-    principalAmount: 0.1,
+    principalAmount: 100,
     currency: 'USD',
     hasInterest: false,
     interestRate: 0.02, // 2%

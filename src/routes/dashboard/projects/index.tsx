@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { createFileRoute, redirect } from '@tanstack/react-router'
+import { createFileRoute, Link, redirect } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { getRequest } from '@tanstack/react-start/server'
 import { useQuery } from '@tanstack/react-query'
@@ -126,9 +126,9 @@ function RouteComponent() {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header */}
-      <div className="flex-1 flex items-center justify-center px-4 py-1 sm:py-10">
-        <div className="w-full max-w-2xl items-center justify-center flex">
-          <PersonallyLogo width="350" height="40" />
+      <div className="flex items-center justify-center">
+        <div className="items-center w-80 ml-8">
+          <Link to="/dashboard"><PersonallyLogo width="80%" height="80%" /></Link>
         </div>
       </div>
       <div className="px-4 sm:px-6 lg:px-8">

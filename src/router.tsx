@@ -30,8 +30,8 @@ export function getRouter() {
     defaultErrorComponent: ({ error }) => <ErrorComponent error={error} />,
     defaultPendingComponent: () => (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="w-full text-center space-y-4">
-          <PersonallyLogo width="350" height="40" />
+        <div className="w-full text-center md:w-90">
+          <PersonallyLogo width="100%" height="67px" />
         </div>
       </div>
     ),

@@ -28,6 +28,7 @@ import { auth } from '@/lib/auth/auth'
 import { cn, formatCurrency, formatDate, formatProperName } from '@/lib/utils'
 import PaymentChart from '@/features/loan/payment-chart'
 import { useMediaQuery } from '@/hooks/use-media-query'
+import PersonallyLogo from '@/components/logo'
 
 const authStateFn = createServerFn({ method: 'GET' }).handler(async () => {
   const session = await auth.api.getSession({ headers: getRequest().headers })
@@ -135,31 +136,13 @@ function RouteComponent() {
   const isMobile = useMediaQuery('(max-width: 768px)')
 
   return (
-    <div className="container mx-auto p-4 md:p-6 max-w-7xl">
-
-      {/* Breadcrumb Navigation */}
-      <div className="flex items-center gap-2 mb-4 text-sm text-muted-foreground">
-        <Link to="/dashboard" className="hover:text-foreground">
-          Dashboard
-        </Link>
-        <span>/</span>
-        <button
-          onClick={() =>
-            navigate({
-              to: '/dashboard/loan/$projectId',
-              params: { projectId },
-            })
-          }
-          className="hover:text-foreground"
-        >
-          {project.title}
-        </button>
-        <span>/</span>
-        <span className="text-foreground">{loanData.contactName}</span>
+    <div className="container mx-auto px-4 md:px-6 max-w-7xl">
+      <div className="flex items-center justify-center">
+        <div className="items-center w-80 ml-8">
+          <Link to="/dashboard"><PersonallyLogo width="80%" height="80%" /></Link>
+        </div>
       </div>
-
-      {/* Header Section - Minimal */}
-      <div className="flex flex-wrap items-center gap-2 mb-6">
+      <div className="flex flex-wrap items-center gap-2 mb-6 pl-2">
         <h1 className="text-2xl md:text-3xl font-bold">
           {loanData.contactName}
         </h1>
@@ -187,7 +170,7 @@ function RouteComponent() {
           />
         </div>
         <div className="lg:col-span-3">
-          <Card className="h-fit sticky top-4">
+          <Card className="h-fit sticky top-4 ring-1 ring-gray-200">
             <CardHeader className="pb-3">
               <CardTitle className="text-base font-medium">Loan Details</CardTitle>
             </CardHeader>
@@ -227,7 +210,7 @@ function RouteComponent() {
         </div>
       </div>
 
-      <Card className="mt-6">
+      <Card className="mt-6 ring-2 ring-gray-200">
         <CardHeader className="pb-3 items-center justify-between">
           <CardTitle className="text-lg font-medium">Payment History</CardTitle>
           <span className="text-sm text-muted-foreground">
