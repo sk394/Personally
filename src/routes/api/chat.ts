@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router"
 import { chat, toStreamResponse } from "@tanstack/ai";
 import { openai } from "@tanstack/ai-openai";
 import { getLoanData, getLoanDetails, getProjects, getSplitwiseBalances, getSplitwiseExpenses, getSplitwiseSettlements, getUserInfo } from "@/lib/ai/tools/server";
+import { env } from "@/lib/env.server";
 
 const SYSTEM_MESSAGE = `You are an intelligent loan and project management assistant. You help users:
 
@@ -13,7 +14,7 @@ const SYSTEM_MESSAGE = `You are an intelligent loan and project management assis
 6. **Provide Insights**: Calculate totals, analyze payment history, and suggest actions.
 
 **Important Guidelines**:
-- **Cannot Provide Information**: If you cannot find a specific piece of information or if a tool return indicates an error/empty state when information was expected, instantly say "I cannot provide information" or "I cannot provide information at this time."
+- **Cannot Provide Information**: If you cannot find a specific piece of information or if a tool return indicates an error/empty state when information was expected, instantly say "I cannot provide information. Try asking a different question.""
 - **Monetary Formats**: All monetary amounts are stored in CENTS (multiply dollars by 100). When showing amounts, convert cents to dollars (divide by 100).
 - **Loan Types**: "borrowed" (user owes money) or "lent" (someone owes user).
 - **Validation**: Always validate required fields before performing mutations.
@@ -25,7 +26,7 @@ const SYSTEM_MESSAGE = `You are an intelligent loan and project management assis
 - Provide actionable suggestions based on data.`;
 
 async function handler(request: Request) {
-    const apiKey = process.env.OPENAI_API_KEY;
+    const apiKey = env.OPENAI_API_KEY;
 
     // Check for API key
     if (!apiKey) {
@@ -41,29 +42,9 @@ async function handler(request: Request) {
         );
     }
 
-    // Set OPENAI_API_KEY for the adapter if it's only available as VITE_OPENAI_API_KEY
-    if (!process.env.OPENAI_API_KEY) {
-        process.env.OPENAI_API_KEY = apiKey;
-    }
-
     const { messages, conversationId } = await request.json();
 
     try {
-        // Dynamically import tools to break circular dependency with router
-        // const {
-        //     getUserInfo,
-        //     getProjects,
-        //     getLoanData,
-        //     getLoanDetails,
-        //     createLoan,
-        //     recordLoanPayment,
-        //     getSplitwiseExpenses,
-        //     getSplitwiseBalances,
-        //     getSplitwiseSettlements,
-        //     createSplitwiseExpense,
-        //     settleUpSplitwise
-        // } = await import("@/lib/ai/tools/server");
-
         // Create a streaming chat response
         const stream = chat({
             adapter: openai(),
@@ -75,12 +56,9 @@ async function handler(request: Request) {
                 getProjects,
                 getLoanData,
                 getLoanDetails,
-                // recordLoanPayment,
                 getSplitwiseExpenses,
                 getSplitwiseBalances,
                 getSplitwiseSettlements,
-                // createSplitwiseExpense,
-                // settleUpSplitwise
             ],
             systemPrompts: [SYSTEM_MESSAGE],
         });

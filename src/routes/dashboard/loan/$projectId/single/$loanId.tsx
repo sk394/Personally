@@ -4,10 +4,8 @@ import { createServerFn } from '@tanstack/react-start'
 import { getRequest } from '@tanstack/react-start/server'
 import {
   ArrowLeft,
-  Calendar,
   Loader2,
   Receipt,
-  User,
 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'

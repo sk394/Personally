@@ -13,7 +13,6 @@ export const env = createEnv({
   client: {
     VITE_APP_TITLE: z.string().min(1).optional(),
     VITE_SERVER_URL: z.string().url().default('http://localhost:3000'),
-    VITE_GEMINI_API_KEY: z.string().min(1),
   },
 
   /**

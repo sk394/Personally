@@ -20,8 +20,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Loan, LoanPayment } from '@/lib/db/schema';
-import { formatCurrency, formatDate } from '@/lib/utils'
-import { AlertDialog } from '@/components/ui/alert-dialog';
+import { formatCurrency } from '@/lib/utils'
 
 
 // Type definitions based on your schema

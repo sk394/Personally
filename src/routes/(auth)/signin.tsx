@@ -8,15 +8,6 @@ import { useAppForm } from '@/hooks/personally.form'
 export const Route = createFileRoute('/(auth)/signin')({
   component: SigninPage,
   ssr: true,
-  // beforeLoad: async () => {
-  //   'use server'
-  //   const request = getRequest()
-  //   const { getSessionUser } = await import('@/lib/utils.server')
-  //   const user = getSessionUser(request)
-  //   if (user) {
-  //     throw redirect({ to: '/dashboard' })
-  //   }
-  // },
 })
 
 const signInSchema = z.object({

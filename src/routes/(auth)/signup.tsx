@@ -1,10 +1,8 @@
 import { useForm } from '@tanstack/react-form'
-import { Link, createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
+import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
 import z from 'zod'
 import { toast } from 'sonner'
 import { LockIcon, MailIcon } from 'lucide-react'
-import { getRequest } from '@tanstack/react-start/server'
-import { createServerFn } from '@tanstack/react-start'
 import { authClient } from '@/lib/auth/auth-client'
 import {
   Field,
@@ -22,25 +20,13 @@ import { ButtonGroup } from '@/components/ui/button-group'
 import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
 import { cn } from '@/lib/utils'
-import { auth } from '@/lib/auth/auth'
 import { authMiddleware } from '@/lib/auth/auth-middleware'
-
-const authStateFn = createServerFn({ method: 'GET' }).handler(async ({ }) => {
-  const session = await auth.api.getSession({ headers: getRequest().headers })
-  if (session) {
-    throw redirect({
-      to: '/dashboard',
-    })
-  }
-
-  return { userId: session!.user?.id }
-})
 
 export const Route = createFileRoute('/(auth)/signup')({
   component: SignupPage,
-  // server: {
-  //   middleware: [authMiddleware],
-  // },
+  server: {
+    middleware: [authMiddleware],
+  },
 })
 
 const signUpSchema = z

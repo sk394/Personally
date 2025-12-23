@@ -1,15 +1,14 @@
 import { createEnv } from '@t3-oss/env-core'
 import { z } from 'zod'
 
-// Dotenv is loaded via vite.config or similar
-// No need to manually load it here in ES modules
-
 export const env = createEnv({
   server: {
     SERVER_URL: z.string().url().optional().default('http://localhost:3000'),
     DATABASE_URL: z.string().url(),
     RESEND_API_KEY: z.string(),
     BETTER_AUTH_SECRET: z.string(),
+    GEMINI_API_KEY: z.string(),
+    OPENAI_API_KEY: z.string(),
   },
 
   /**

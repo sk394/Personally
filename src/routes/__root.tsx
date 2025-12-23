@@ -19,7 +19,6 @@ import type { TRPCRouter } from '@/server/router'
 import type { TRPCOptionsProxy } from '@trpc/tanstack-react-query'
 import { seo } from '@/lib/seo'
 import NotFound from '@/components/ui/not-found'
-import PersonallyLogo from '@/components/logo'
 import { ConfirmProvider } from '@/hooks/confirm-context'
 
 export interface MyRouterContext {
@@ -44,6 +43,11 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       }),
     ],
     links: [
+      {
+        rel: 'icon',
+        href: '/logo.svg',
+        type: 'image/svg+xml',
+      },
       {
         rel: 'stylesheet',
         href: appCss,

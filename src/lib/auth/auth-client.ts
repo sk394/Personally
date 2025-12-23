@@ -10,14 +10,6 @@ export const authClient = createAuthClient({
   baseURL: env.VITE_SERVER_URL,
   plugins: [
     twoFactorClient(),
-    // adminClient({
-    //   ac,
-    //   roles: {
-    //     user: userRole,
-    //     admin: adminRole,
-    //     superadmin: superAdminRole,
-    //   },
-    // }),
     emailOTPClient(),
     multiSessionClient(),
   ],

@@ -14,7 +14,19 @@ import {
   ArrowLeft,
   Clock,
   BadgeCheckIcon,
+  Trash2,
 } from 'lucide-react'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import PersonallyLogo from '@/components/logo'
@@ -23,7 +35,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { useTRPC } from '@/integrations/trpc/react'
 import { auth } from '@/lib/auth/auth'
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, formatProperName } from '@/lib/utils'
 import { CreateExpenseDialog } from '@/features/splitwise/create-expense-dialog'
 import { SettlementDialog } from '@/features/splitwise/settlement-dialog'
 import { InviteMemberDialog } from '@/features/splitwise/invite-member-dialog'
@@ -382,7 +394,7 @@ function RouteComponent() {
                             <Clock className="size-4 text-yellow-600 dark:text-yellow-400 flex-shrink-0" />
                           )}
                           <span className="text-muted-foreground">
-                            {isPayer ? 'You' : otherUser?.name?.trim().split(/\s+/)[0] || otherUser?.email || 'User'} {settlement.paymentMethod === 'cash' ? 'paid' : 'zelle'}{' '}{isPayer ? otherUser?.name?.trim().split(/\s+/)[0] : 'You'} {" "}
+                            {isPayer ? 'You' : otherUser?.name?.trim().split(/\s+/)[0] || otherUser?.email || 'User'} {settlement.paymentMethod === 'cash' ? 'paid' : 'zelle'}{' '}{isPayer ? otherUser?.name?.trim().split(/\s+/)[0] : settlement.receiver.name?.trim().split(/\s+/)[0] || settlement.receiver.email || 'User'} {" "}
                             <span className="font-semibold  text-green-600">
                               {formatCurrency(settlement.amount, 'USD')}
                             </span>
@@ -409,10 +421,9 @@ function RouteComponent() {
               No outstanding balances.
             </p>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-3 items-center">
               {balances?.map((balance) => {
                 const isIOwe = balance.fromUserId === userId
-                const otherUser = isIOwe ? balance.creditor : balance.debtor
                 const totalAmount = balance.totalAmount || balance.amount
                 const hasInterest = balance.accruedInterest && balance.accruedInterest > 0
 
@@ -423,28 +434,21 @@ function RouteComponent() {
                     />
                     <CardContent className="p-4">
                       <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-3">
-                          <Avatar className="size-8">
-                            <AvatarFallback>
-                              {otherUser?.email?.charAt(0).toUpperCase() || 'U'}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <p className="text-sm font-medium">
-                              {otherUser?.name || otherUser?.email || 'Unknown'}
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              {isIOwe ? 'you owe' : 'owes you'}
-                            </p>
-                          </div>
-                        </div>
-                        <span
-                          className={`font-bold text-lg ${isIOwe ? 'text-red-600' : 'text-green-600'}`}
-                        >
-                          {formatCurrency(totalAmount, 'USD')}
-                        </span>
+                        <p className="text-sm font-medium">
+                          {isIOwe ? 'You' : formatProperName(balance.debtor?.name).split(' ')[0] || 'Unknown'}{' '}
+                          <span className="text-muted-foreground">{isIOwe ? "owe" : "owes"}</span>{' '}
+                          {balance.toUserId === userId
+                            ? 'you'
+                            : formatProperName(balance.creditor?.name).split(' ')[0] || 'Unknown'}{' '}
+                          <span
+                            className={`font-bold ${isIOwe ? 'text-red-600' : 'text-green-600'}`}
+                          >
+                            {formatCurrency(totalAmount, 'USD')}
+                          </span>
+                        </p>
                       </div>
-                      {hasInterest && (
+
+                      {hasInterest || balance.interestRate && (
                         <div className="pt-2 border-t text-xs text-muted-foreground space-y-1">
                           <div className="flex justify-between">
                             <span>Principal:</span>
@@ -558,13 +562,15 @@ function RouteComponent() {
                       </div>
 
                       {/* Delete Button (Only visible if I paid or am owner - simplified to if I paid for now) */}
-                      {/* {expense.paidBy === userId && (
+                      {/* Delete Button */}
+                      {expense.paidBy === userId && (
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:text-destructive hover:bg-destructive/10"
+                              onClick={() => setDeletingId(expense.id)}
+                              className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 -mt-8"
                             >
                               <Trash2 className="size-4" />
                             </Button>
@@ -580,7 +586,11 @@ function RouteComponent() {
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogCancel
+                                onClick={() => setDeletingId(null)}
+                              >
+                                Cancel
+                              </AlertDialogCancel>
                               <AlertDialogAction
                                 onClick={() =>
                                   deleteExpenseMutation.mutate({
@@ -599,7 +609,7 @@ function RouteComponent() {
                             </AlertDialogFooter>
                           </AlertDialogContent>
                         </AlertDialog>
-                      )} */}
+                      )}
                     </div>
                   </CardContent>
                 </Card>

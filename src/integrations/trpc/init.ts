@@ -3,7 +3,6 @@ import { TRPCError, initTRPC } from '@trpc/server'
 import superjson from 'superjson'
 import { ZodError } from 'zod'
 import { auth } from '@/lib/auth/auth'
-import { redirect } from '@tanstack/react-router'
 
 export const createTRPCContext = async (opts: {
   headers: Headers

@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react';
-import { Card, CardContent, CardHeader, CardHeading, CardToolbar } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardHeading } from '@/components/ui/card';
 import { ChartConfig, ChartContainer, ChartTooltip } from '@/components/ui/chart';
-// import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Area, ComposedChart, Line, XAxis, YAxis } from 'recharts';
 import { formatCurrency, formatDate } from '@/lib/utils';
 
@@ -250,24 +249,6 @@ export default function PaymentChart({
                         )}
                     </div>
                 </CardHeading>
-                {/* <CardToolbar>
-                    <ToggleGroup
-                        type="single"
-                        value={selectedPeriod}
-                        onValueChange={(value) => value && setSelectedPeriod(value as PeriodKey)}
-                        className="bg-zinc-800 p-1 rounded-full"
-                    >
-                        {Object.values(PERIODS).map((period) => (
-                            <ToggleGroupItem
-                                key={period.key}
-                                value={period.key}
-                                className="px-3 lg:px-4 py-1.5 lg:py-2 text-xs lg:text-sm data-[state=on]:bg-zinc-700 data-[state=on]:text-white text-zinc-400 hover:bg-zinc-700 hover:text-white rounded-full"
-                            >
-                                {period.label}
-                            </ToggleGroupItem>
-                        ))}
-                    </ToggleGroup>
-                </CardToolbar> */}
             </CardHeader>
 
             <CardContent className="ps-2.5 pe-4.5 pb-6">

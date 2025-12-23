@@ -1,5 +1,3 @@
-import { TRPCError } from '@trpc/server'
-import { redirect, notFound } from '@tanstack/react-router'
 import type { Session } from 'better-auth/types'
 
 export interface ProjectAccessValidationOptions {
@@ -69,14 +67,14 @@ export function handleProjectAccessError(error: any) {
       message: 'Project not found',
     }
   }
-  
+
   if (error.message?.includes('access')) {
     return {
       type: 'forbidden' as const,
       message: 'You do not have access to this project',
     }
   }
-  
+
   if (error.message?.includes('type mismatch')) {
     return {
       type: 'type-mismatch' as const,

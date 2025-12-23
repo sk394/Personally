@@ -8,7 +8,6 @@ import { env } from '../env.server'
 import { sendEmail } from './send-email'
 import ResetPasswordEmail from '@/components/auth/reset-password-email'
 import SendVerificationOTP from '@/components/auth/send-verification-otp'
-import WelcomeEmail from '@/components/auth/welcome-email'
 import { db } from '@/lib/db'
 import * as schema from '@/lib/db/schema/auth'
 // import { ac, admin as adminRole, superadmin as superAdminRole, user as userRole } from "./permissions";
@@ -27,7 +26,7 @@ export const auth = betterAuth({
     onError: (error) => {
       console.error('auth onAPIError', error)
     },
-    errorURL: '/login',
+    errorURL: '/signin',
   },
   rateLimit: {
     enabled: true,
@@ -97,7 +96,7 @@ export const auth = betterAuth({
     //   },
     // }),
     mcp({
-      loginPage: '/login',
+      loginPage: '/signin',
     }),
     emailOTP({
       async sendVerificationOTP({ email, otp }) {

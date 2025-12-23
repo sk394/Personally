@@ -5,6 +5,8 @@ import { Badge } from '@/components/ui/badge'
 import { DollarSign, Users, Folder, ExternalLink } from 'lucide-react'
 import { getProjectUrl, getProjectTypeDisplayName } from '@/lib/project-navigation'
 import { ProjectActions } from './project-actions'
+import { useTRPC } from '@/integrations/trpc/react'
+import { useQuery } from '@tanstack/react-query'
 
 interface ProjectNavigationProps {
   projects: Array<{
@@ -52,6 +54,12 @@ interface ProjectCardProps {
 function ProjectCard({ project }: ProjectCardProps) {
   const projectUrl = getProjectUrl(project)
   const typeDisplayName = getProjectTypeDisplayName(project.projectType)
+
+  const trpc = useTRPC()
+
+  const { data: memberCount } = useQuery(trpc.project.getMemberCount.queryOptions({
+    projectId: project.id,
+  }))
 
   const getProjectIcon = () => {
     switch (project.projectType) {
@@ -117,7 +125,7 @@ function ProjectCard({ project }: ProjectCardProps) {
         )}
         <div className="flex items-center justify-between text-xs text-muted-foreground">
           <span>
-            {project.memberCount ? `${project.memberCount} members` : 'Solo project'}
+            {memberCount ? `${memberCount} members` : 'Solo project'}
           </span>
           {project.updatedAt && (
             <span>

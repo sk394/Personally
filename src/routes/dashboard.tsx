@@ -1,7 +1,6 @@
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
 import { UserMenu } from '@/components/user-menu'
 import NotFound from '@/components/ui/not-found'
-import { Badge } from '@/components/ui/badge'
 
 export const Route = createFileRoute('/dashboard')({
     beforeLoad: async ({ context }) => {

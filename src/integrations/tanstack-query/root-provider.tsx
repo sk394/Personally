@@ -14,6 +14,7 @@ import superjson, { SuperJSON } from 'superjson'
 import type { TRPCCombinedDataTransformer } from '@trpc/server'
 import type { TRPCRouter } from '@/server/router'
 import { TRPCProvider } from '@/integrations/trpc/react'
+import { env } from '@/lib/env.server.ts'
 
 export const transformer: TRPCCombinedDataTransformer = {
   input: {
@@ -49,7 +50,7 @@ function getUrl() {
     if (typeof window !== 'undefined') {
       return ''
     }
-    return `http://localhost:${process.env.PORT ?? 3000}`
+    return `${env.SERVER_URL}`
   })()
   return `${base}/api/trpc`
 }

@@ -35,13 +35,6 @@ export function LandingChat() {
         }
     }, [])
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault()
-        if (input.trim()) {
-            navigate({ to: '/dashboard' })
-        }
-    }
-
     return (
         <div className="w-full max-w-2xl mx-auto mt-12 overflow-hidden rounded-2xl border border-border bg-card/50 shadow-2xl backdrop-blur-md">
             <div className="flex items-center gap-3 border-b border-border bg-muted/30 px-6 py-4">

@@ -1,14 +1,12 @@
 import { useStore } from '@tanstack/react-form'
 import {
   CalendarIcon,
-  ChevronDown,
   Loader2,
   LockIcon,
   MailIcon,
   X,
 } from 'lucide-react'
 import { format } from 'date-fns'
-import { Outlet } from '@tanstack/react-router'
 import { RadioGroup, RadioGroupItem } from './ui/radio-group'
 import { Button } from '@/components/ui/button'
 import { ButtonGroup } from '@/components/ui/button-group'
@@ -22,12 +20,10 @@ import {
   FieldSet,
   FieldTitle,
 } from '@/components/ui/field'
-import { Input } from '@/components/ui/input'
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-  InputGroupText,
 } from '@/components/ui/input-group'
 import {
   useFieldContext,

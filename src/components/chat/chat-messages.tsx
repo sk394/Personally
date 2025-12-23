@@ -1,5 +1,5 @@
 import { Bot } from 'lucide-react'
-import { MessageBubble, TypingIndicator } from './chat-message-helper'
+import { MessageBubble } from './chat-message-helper'
 import type { UIMessage } from '@tanstack/ai-react'
 
 

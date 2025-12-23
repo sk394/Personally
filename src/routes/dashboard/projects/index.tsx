@@ -86,6 +86,8 @@ function RouteComponent() {
     return [...ownedProjects, ...memberProjects]
   }, [projectsData])
 
+  console.log(allProjects)
+
   // Calculate project counts
   const projectCounts = useMemo(() => {
     const counts = {

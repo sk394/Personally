@@ -43,6 +43,22 @@ export const projectRouter = createTRPCRouter({
     }
   }),
 
+  // get members count for project
+  getMemberCount: protectedProcedure
+    .input(
+      z.object({
+        projectId: z.string().uuid(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const memberCount = await db
+        .select()
+        .from(projectMember)
+        .where(eq(projectMember.projectId, input.projectId))
+
+      return memberCount.length
+    }),
+
   // Get projects by type for the current user
   getByType: protectedProcedure
     .input(

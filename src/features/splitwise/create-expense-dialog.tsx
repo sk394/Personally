@@ -29,7 +29,7 @@ const expenseSchema = z.object({
   description: z.string().min(1, 'Description is required'),
   category: z.string().min(1, 'Category is required'),
   amount: z.number().gt(0, 'Amount must be greater than 0'),
-  date: z.string(),
+  date: z.date(),
   paidBy: z.string().min(1, 'Payer is required'),
   splitType: z.enum(['equal', 'percentage', 'shares', 'exact']),
   notes: z.string().optional(),
@@ -60,8 +60,8 @@ export function CreateExpenseDialog({
     defaultValues: {
       description: 'Expenses',
       category: 'Grocery',
-      amount: 0,
-      date: new Date().toISOString(),
+      amount: 100,
+      date: new Date(),
       paidBy: currentUserId,
       splitType: 'equal',
       notes: '',
@@ -75,14 +75,13 @@ export function CreateExpenseDialog({
       // Prepare splits
       const splits = value.involvedUsers.map((userId) => ({
         userId,
-        // Amount calculation handled by backend for 'equal'
       }))
 
       await createExpenseMutation.mutateAsync({
         projectId,
         description: value.description,
         amount: Math.round(value.amount * 100), // cents
-        date: new Date(value.date),
+        date: value.date,
         paidBy: value.paidBy,
         splitType: value.splitType,
         category: value.category,
@@ -97,13 +96,19 @@ export function CreateExpenseDialog({
   useEffect(() => {
     if (members && form.state.values.involvedUsers.length === 0) {
       const allMemberIds = members.map((m) => m.userId)
-      // Also include current user if not in members list (e.g. owner)
-      // But getMembers usually returns all including owner if they are in project_member
-      // If owner is not in project_member, we might need to handle that.
-      // Assuming getMembers returns everyone.
       form.setFieldValue('involvedUsers', allMemberIds)
     }
-  }, [members])
+  }, [members, open])
+
+  // Ensure payer is always included in involvedUsers when payer changes
+  useEffect(() => {
+    const paidBy = form.state.values.paidBy
+    const involvedUsers = form.state.values.involvedUsers
+
+    if (paidBy && !involvedUsers.includes(paidBy)) {
+      form.setFieldValue('involvedUsers', [...involvedUsers, paidBy])
+    }
+  }, [form.state.values.paidBy])
 
   const createExpenseMutation = useMutation(
     trpc.splitwise.createExpense.mutationOptions({
@@ -135,18 +140,6 @@ export function CreateExpenseDialog({
     if (!createExpenseMutation.isPending && !isComplete) {
       onOpenChange(false)
       setTimeout(resetForm, 300)
-    }
-  }
-
-  const toggleUser = (userId: string) => {
-    const current = form.state.values.involvedUsers
-    if (current.includes(userId)) {
-      form.setFieldValue(
-        'involvedUsers',
-        current.filter((id) => id !== userId),
-      )
-    } else {
-      form.setFieldValue('involvedUsers', [...current, userId])
     }
   }
 
@@ -234,20 +227,6 @@ export function CreateExpenseDialog({
                     )}
                   </form.AppField>
                   <form.AppField
-                    name="date"
-                  >
-                    {(field) => (
-                      <field.DateField
-                        label="Date"
-                        placeholder="Select date"
-                        className="col-span-2"
-                      />
-                    )}
-                  </form.AppField>
-                </div>
-
-                <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
-                  <form.AppField
                     name="paidBy"
                   >
                     {(field) => (
@@ -262,10 +241,22 @@ export function CreateExpenseDialog({
                         }
 
                       />
-
                     )}
                   </form.AppField>
-                  <form.AppField
+                </div>
+                <form.AppField
+                  name="date"
+                >
+                  {(field) => (
+                    <field.DateField
+                      label="Date"
+                      placeholder="Select date"
+                      className="col-span-2"
+                    />
+                  )}
+                </form.AppField>
+
+                {/* <form.AppField
                     name="splitType"
                   >
                     {(field) => (
@@ -280,40 +271,23 @@ export function CreateExpenseDialog({
                         ]}
                       />
                     )}
-                  </form.AppField>
+                  </form.AppField> */}
+
+                <div className="flex justify-end border-t border-zinc-200 dark:border-zinc-800 gap-2 py-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleClose}
+                    disabled={createExpenseMutation.isPending}
+                  >
+                    Cancel
+                  </Button>
+                  <form.AppForm>
+                    <form.SubmitButton label="Add Expense" />
+                  </form.AppForm>
                 </div>
               </form>
             </DialogBody>
-
-            <DialogFooter className="border-t border-zinc-200 dark:border-zinc-800 pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleClose}
-                disabled={createExpenseMutation.isPending}
-              >
-                Cancel
-              </Button>
-
-              <Button
-                onClick={form.handleSubmit}
-                disabled={
-                  form.state.isSubmitting || createExpenseMutation.isPending
-                }
-              >
-                {createExpenseMutation.isPending ? (
-                  <>
-                    <Loader2 className="size-4 animate-spin mr-2" />
-                    Adding...
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle2 className="size-4 mr-2" />
-                    Save Expense
-                  </>
-                )}
-              </Button>
-            </DialogFooter>
           </>
         ) : (
           <DialogBody className="py-12">

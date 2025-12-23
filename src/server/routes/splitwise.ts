@@ -1,10 +1,8 @@
 import { z } from 'zod'
 import { TRPCError } from '@trpc/server'
-import { and, desc, eq, inArray, sql } from 'drizzle-orm'
+import { and, desc, eq } from 'drizzle-orm'
 import { db } from '@/lib/db'
 import {
-  ExpenseInsertSchema,
-  SettlementInsertSchema,
   balance,
   expense,
   expenseSplit,
@@ -12,7 +10,6 @@ import {
   splitwiseSetting,
 } from '@/lib/db/schema/splitwise'
 import { project, projectMember } from '@/lib/db/schema/project'
-import { user } from '@/lib/db/schema/auth'
 import { createTRPCRouter, protectedProcedure } from '@/integrations/trpc/init'
 
 // Helper to calculate accrued interest
@@ -244,6 +241,12 @@ export const splitwiseRouter = createTRPCRouter({
           })
           .returning()
 
+        // Ensure payer is included in the splits (Safety check)
+        const involvedUserIds = new Set(input.splits.map((s) => s.userId))
+        if (!involvedUserIds.has(input.paidBy)) {
+          input.splits.push({ userId: input.paidBy })
+        }
+
         // Create splits
         // If equal split, calculate amounts
         let splitsToInsert = input.splits.map((s) => ({
@@ -253,8 +256,9 @@ export const splitwiseRouter = createTRPCRouter({
         }))
 
         if (input.splitType === 'equal') {
-          const splitAmount = Math.floor(input.amount / input.splits.length)
-          const remainder = input.amount % input.splits.length
+          const numPeople = input.splits.length
+          const splitAmount = Math.floor(input.amount / numPeople)
+          const remainder = input.amount % numPeople
 
           splitsToInsert = splitsToInsert.map((s, i) => ({
             ...s,
@@ -264,16 +268,18 @@ export const splitwiseRouter = createTRPCRouter({
 
         await tx.insert(expenseSplit).values(splitsToInsert)
 
-        // Update balances with interest settings
+        // Update balances
+        // Logic: Payer paid for everyone.
+        // Each person (Debtor) owes Payer (Creditor) their share amount.
+        // We skip the payer themselves because they don't owe themselves.
         for (const split of splitsToInsert) {
-          if (split.userId === input.paidBy) continue // Skip self
+          if (split.userId === input.paidBy) continue
 
-          // Logic: Splitter owes Payer
           await addToBalance(
             tx,
             input.projectId,
-            split.userId,
-            input.paidBy,
+            split.userId, // Debtor
+            input.paidBy, // Creditor
             split.amount,
             settings
               ? {
@@ -364,8 +370,33 @@ export const splitwiseRouter = createTRPCRouter({
         },
       })
 
-      // Calculate accrued interest for each balance
-      const balancesWithInterest = balances.map((bal) => {
+      // Aggregate balances to handle potential duplicate rows (healing bad data)
+      const balanceMap = new Map<string, typeof balances[0]>()
+
+      for (const bal of balances) {
+        const key = `${bal.fromUserId}-${bal.toUserId}`
+        if (balanceMap.has(key)) {
+          const existing = balanceMap.get(key)!
+          existing.amount += bal.amount
+          existing.baseAmount += bal.baseAmount
+          // Keep the earliest interestStartDate if multiple exist
+          if (bal.interestStartDate && existing.interestStartDate) {
+            if (new Date(bal.interestStartDate) < new Date(existing.interestStartDate)) {
+              existing.interestStartDate = bal.interestStartDate
+            }
+          } else if (bal.interestStartDate) {
+            existing.interestStartDate = bal.interestStartDate
+          }
+        } else {
+          // Clone to avoid mutating original if needed, though here we just use the object
+          balanceMap.set(key, { ...bal })
+        }
+      }
+
+      const aggregatedBalances = Array.from(balanceMap.values())
+
+      // Calculate accrued interest for each aggregated balance
+      const balancesWithInterest = aggregatedBalances.map((bal) => {
         let accruedInterest = 0
 
         // Check if interest is enabled and configured
