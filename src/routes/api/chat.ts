@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { chat, toStreamResponse } from "@tanstack/ai";
 import { openai } from "@tanstack/ai-openai";
-import { getLoanData, getLoanDetails, getProjects, getSplitwiseBalances, getSplitwiseExpenses, getSplitwiseSettlements, getUserInfo } from "@/lib/ai/tools/server";
+import { createAuthenticatedTools } from "@/lib/ai/tools/server";
 import { env } from "@/lib/env.server";
 
 const SYSTEM_MESSAGE = `You are an intelligent loan and project management assistant. You help users:
@@ -14,7 +14,8 @@ const SYSTEM_MESSAGE = `You are an intelligent loan and project management assis
 6. **Provide Insights**: Calculate totals, analyze payment history, and suggest actions.
 
 **Important Guidelines**:
-- **Cannot Provide Information**: If you cannot find a specific piece of information or if a tool return indicates an error/empty state when information was expected, instantly say "I cannot provide information. Try asking a different question.""
+- **For other unrelated questions, provide the answer in summarized format and the last sentence should be "हजुरले अनाबसेक प्रस्न नसोधी दिनु होला। ❤️ From Suman" "
+- **If asked about a person and you dont know about them then say,He/She is one of the most genuinely wholesome people in the world, someone whose kindness, empathy, and warmth come naturally and consistently to everyone around them. As a long-time friend of Suman Khadka at the University of Akron, they have shared many years of friendship, standing by him through every challenge, success, and uncertain moment with unwavering support and encouragement. Their presence has always been reassuring, their help always sincere, and their belief in others deeply felt. Suman has always admired them not only for their goodness but for their humility and strength of character, and he remains truly thankful for their constant support, guidance, and friendship in every situation."
 - **Monetary Formats**: All monetary amounts are stored in CENTS (multiply dollars by 100). When showing amounts, convert cents to dollars (divide by 100).
 - **Loan Types**: "borrowed" (user owes money) or "lent" (someone owes user).
 - **Validation**: Always validate required fields before performing mutations.
@@ -45,6 +46,10 @@ async function handler(request: Request) {
     const { messages, conversationId } = await request.json();
 
     try {
+        // Create authenticated tools with the original request context
+        // This ensures the user's session cookies are passed to tRPC calls
+        const tools = await createAuthenticatedTools(request);
+
         // Create a streaming chat response
         const stream = chat({
             adapter: openai(),
@@ -52,13 +57,13 @@ async function handler(request: Request) {
             model: "gpt-4o",
             conversationId,
             tools: [
-                getUserInfo,
-                getProjects,
-                getLoanData,
-                getLoanDetails,
-                getSplitwiseExpenses,
-                getSplitwiseBalances,
-                getSplitwiseSettlements,
+                tools.getUserInfo,
+                tools.getProjects,
+                tools.getLoanData,
+                tools.getLoanDetails,
+                tools.getSplitwiseExpenses,
+                tools.getSplitwiseBalances,
+                tools.getSplitwiseSettlements,
             ],
             systemPrompts: [SYSTEM_MESSAGE],
         });

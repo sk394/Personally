@@ -100,48 +100,28 @@ export function InviteMemberDialog({
   const formContent = !isComplete ? (
     <form
       onSubmit={(e) => {
-        e.preventDefault()
         e.stopPropagation()
         form.handleSubmit()
       }}
       className="space-y-4"
     >
-      <form.Field
-        name="email"
-        children={(field) => (
-          <div className="space-y-2">
-            <Label htmlFor={field.name}>Email Address</Label>
-            <Input
-              id={field.name}
-              value={field.state.value}
-              onBlur={field.handleBlur}
-              onChange={(e) => field.handleChange(e.target.value)}
-              placeholder="friend@example.com"
-            />
-            {field.state.meta.errors ? (
-              <p className="text-sm text-red-500">
-                {field.state.meta.errors.join(', ')}
-              </p>
-            ) : null}
-          </div>
+      <form.AppField name="email">
+        {(field) => (
+          <field.EmailField
+            label="Email"
+            placeholder="bipendra@example.com"
+          />
         )}
-      />
+      </form.AppField>
 
-      <form.Field
-        name="name"
-        children={(field) => (
-          <div className="space-y-2">
-            <Label htmlFor={field.name}>Name (Optional)</Label>
-            <Input
-              id={field.name}
-              value={field.state.value || ''}
-              onBlur={field.handleBlur}
-              onChange={(e) => field.handleChange(e.target.value)}
-              placeholder="John Doe"
-            />
-          </div>
+      <form.AppField name="name">
+        {(field) => (
+          <field.PersonallyTextField
+            label="Name"
+            placeholder="Bipendra Basnet"
+          />
         )}
-      />
+      </form.AppField>
     </form>
   ) : (
     <motion.div
@@ -158,22 +138,14 @@ export function InviteMemberDialog({
       </motion.div>
       <h3 className="text-xl font-semibold mb-2">Invitation Sent!</h3>
       <p className="text-zinc-600 dark:text-zinc-400">
-        An email has been sent to the user.
+        A notification has been sent to the user.
       </p>
     </motion.div>
   )
 
   // Footer buttons - shared between Dialog and Drawer
   const footerButtons = !isComplete && (
-    <>
-      <Button
-        type="button"
-        variant="outline"
-        onClick={handleClose}
-        disabled={inviteMutation.isPending}
-      >
-        Cancel
-      </Button>
+    <div className="flex gap-2">
 
       <Button
         onClick={form.handleSubmit}
@@ -191,7 +163,15 @@ export function InviteMemberDialog({
           </>
         )}
       </Button>
-    </>
+      <Button
+        type="button"
+        variant="outline"
+        onClick={handleClose}
+        disabled={inviteMutation.isPending}
+      >
+        Cancel
+      </Button>
+    </div>
   )
 
   // Desktop: Dialog
@@ -231,25 +211,19 @@ export function InviteMemberDialog({
 
   // Mobile: Drawer
   return (
-    <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="max-h-[90vh] overflow-y-auto">
-        <DrawerHeader className="text-left">
+    <Drawer open={open} onOpenChange={onOpenChange} direction="top">
+      <DrawerContent className="z-1000 p-4" >
+        <DrawerHeader className="flex flex-col text-left">
           <div className="flex items-center gap-2">
             <UserPlus className="size-6 text-indigo-500" />
             <DrawerTitle>Invite Member</DrawerTitle>
           </div>
-          <DrawerDescription>
-            Invite a new member to this project via email.
-          </DrawerDescription>
         </DrawerHeader>
 
-        <div className="px-4 pb-4">
+        <div className="flex-1 px-4 space-y-4">
           {formContent}
-        </div>
-
-        <DrawerFooter>
           {footerButtons}
-        </DrawerFooter>
+        </div>
       </DrawerContent>
     </Drawer>
   )

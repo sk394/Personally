@@ -199,15 +199,6 @@ export function PaymentDialog({
                         <DrawerFooter>
                             <Button
                                 type="button"
-                                variant="outline"
-                                onClick={handleClose}
-                                disabled={addPaymentMutation.isPending}
-                            >
-                                Cancel
-                            </Button>
-
-                            <Button
-                                type="button"
                                 onClick={(e) => {
                                     e.preventDefault()
                                     e.stopPropagation()
@@ -228,6 +219,14 @@ export function PaymentDialog({
                                         Record Payment
                                     </>
                                 )}
+                            </Button>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={handleClose}
+                                disabled={addPaymentMutation.isPending}
+                            >
+                                Cancel
                             </Button>
                         </DrawerFooter>
                     </>

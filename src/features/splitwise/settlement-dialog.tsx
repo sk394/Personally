@@ -134,6 +134,20 @@ export function SettlementDialog({
       className="space-y-4"
     >
       <div className="grid md:grid-cols-2 gap-4 sm:grid-cols-1">
+        <form.AppField name="amount">
+          {(field) => (
+            <field.NumberField
+              label="Amount"
+              placeholder="Enter amount"
+              required
+              children={
+                <InputGroupAddon autoFocus={false}>
+                  <DollarSign className="size-4" />
+                </InputGroupAddon>
+              }
+            />
+          )}
+        </form.AppField>
         <form.AppField name="payerId">
           {(field) => (
             <field.SelectField
@@ -149,6 +163,10 @@ export function SettlementDialog({
             />
           )}
         </form.AppField>
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-4 sm:grid-cols-1">
+
         <form.AppField name="receiverId">
           {(field) => (
             <field.SelectField
@@ -164,24 +182,6 @@ export function SettlementDialog({
             />
           )}
         </form.AppField>
-      </div>
-
-      <div className="grid md:grid-cols-2 gap-4 sm:grid-cols-1">
-        <form.AppField name="amount">
-          {(field) => (
-            <field.NumberField
-              label="Amount"
-              placeholder="Enter amount"
-              required
-              children={
-                <InputGroupAddon>
-                  <DollarSign className="size-4" />
-                </InputGroupAddon>
-              }
-            />
-          )}
-        </form.AppField>
-
         <form.AppField name="paymentMethod">
           {(field) => (
             <field.SelectField
@@ -292,8 +292,8 @@ export function SettlementDialog({
 
   // Mobile: Drawer
   return (
-    <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="max-h-[90vh]">
+    <Drawer open={open} onOpenChange={onOpenChange} autoFocus={false}>
+      <DrawerContent>
         <div className="w-full max-w-sm">
           <DrawerHeader className="flex text-left float-left">
             <div className="flex items-center gap-2">
@@ -306,10 +306,9 @@ export function SettlementDialog({
           </DrawerHeader>
         </div>
 
-        <div className="px-4 pb-4 overflow-y-auto max-h-[60vh]">
+        <div className="px-4">
           {formContent}
         </div>
-
         <DrawerFooter>
           {footerButtons}
         </DrawerFooter>

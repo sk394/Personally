@@ -1,6 +1,5 @@
 import { ChevronDown, Globe, Lock, Users, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
-import { useState } from 'react'
 import { toast } from 'sonner'
 import type { InvitationInput } from '@/features/shared-form';
 import { Button } from '@/components/ui/button'
@@ -9,6 +8,13 @@ import { projectOpts } from '@/features/shared-form'
 import { withForm } from '@/hooks/personally.form'
 import { cn } from '@/lib/utils'
 import { ProjectTypeSelector } from '@/components/project/project-type-selector'
+
+const generateId = () => {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID()
+  }
+  return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+}
 
 export const ProjectForm = withForm({
   ...projectOpts,
@@ -58,6 +64,7 @@ export const ProjectForm = withForm({
                 onTypeSelect={(type) => {
                   field.handleChange(type)
                 }}
+                autoFocus={false}
               />
             )}
           </form.AppField>
@@ -246,7 +253,7 @@ export const ProjectForm = withForm({
                             form.setFieldValue('invitations', [
                               ...form.state.values.invitations,
                               {
-                                id: crypto.randomUUID(),
+                                id: generateId(),
                                 email,
                                 name: form.state.values.currentInviteName,
                               },
@@ -264,7 +271,7 @@ export const ProjectForm = withForm({
                 <form.AppField name="currentInviteName">
                   {(field) => (
                     <field.PersonallyTextField
-                      placeholder="Name (optional)"
+                      placeholder="Name"
                       className="h-9"
                       onKeyDown={(e: React.KeyboardEvent) => {
                         if (e.key === 'Enter') {
@@ -274,7 +281,7 @@ export const ProjectForm = withForm({
                             form.setFieldValue('invitations', [
                               ...form.state.values.invitations,
                               {
-                                id: crypto.randomUUID(),
+                                id: generateId(),
                                 email,
                                 name: form.state.values.currentInviteName,
                               },
@@ -293,19 +300,23 @@ export const ProjectForm = withForm({
                   type="button"
                   variant="outline"
                   onClick={() => {
-                    const email = form.state.values.currentInviteEmail
-                    if (email.trim()) {
+                    const email = form.getFieldValue('currentInviteEmail')
+                    const name = form.getFieldValue('currentInviteName')
+                    const invitations = form.getFieldValue('invitations')
+                    if (email && email.trim()) {
                       form.setFieldValue('invitations', [
-                        ...form.state.values.invitations,
+                        ...invitations,
                         {
-                          id: crypto.randomUUID(),
+                          id: generateId(),
                           email,
-                          name: form.state.values.currentInviteName,
+                          name: name || '',
                         },
                       ])
                       form.setFieldValue('currentInviteEmail', '')
                       form.setFieldValue('currentInviteName', '')
                       toast.success('Invitation added')
+                    } else {
+                      toast.error('Please enter an email address')
                     }
                   }}
                   className="w-full"

@@ -33,10 +33,12 @@ function RouteComponent() {
 
   if (projectsLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="w-full text-center space-y-4">
-          <PersonallyLogo width="350" height="40" />
-          <p className="text-muted-foreground">Loading your dashboard...</p>
+      <div className="min-h-screen flex items-center justify-center px-4">
+        <div className="w-full text-center space-y-3">
+          <div className="mx-auto w-[200px] sm:w-[280px] md:w-[350px]">
+            <PersonallyLogo width="100%" height="32" />
+          </div>
+          <p className="text-muted-foreground text-sm">Loading your dashboard...</p>
         </div>
       </div>
     )
@@ -88,13 +90,13 @@ function RouteComponent() {
       <div className="flex-1">
         {isCentered ? (
           // Centered view when no messages
-          <div className="flex flex-col items-center justify-center h-screen px-4">
-            <div className="w-full max-w-3xl space-y-6">
+          <div className="flex flex-col items-center justify-center h-screen px-3 sm:px-4">
+            <div className="w-full max-w-3xl space-y-4 sm:space-y-6">
               <div className="text-center space-y-1">
-                <div className="mx-auto sm:w-60 md:w-80 lg:w-100">
-                  <PersonallyLogo width="100%" height="60px" />
+                <div className="mx-auto w-40 sm:w-60 md:w-80">
+                  <PersonallyLogo width="100%" height="40" />
                 </div>
-                <p className="text-muted-foreground text-sm">
+                <p className="text-muted-foreground text-xs sm:text-sm">
                   How can I help you today?
                 </p>
               </div>
@@ -113,7 +115,7 @@ function RouteComponent() {
           // Normal view with messages
           <div className="flex flex-col h-screen">
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4">
+            <div className="flex-1 overflow-y-auto p-2 sm:p-4">
               <MessageList
                 messages={messages as UIMessage[]}
                 isStreaming={isLoading}
@@ -121,7 +123,7 @@ function RouteComponent() {
             </div>
 
             {/* Input */}
-            <div className="p-4 border-t">
+            <div className="p-2 sm:p-4 border-t">
               <ChatInput
                 input={input}
                 setInput={setInput}

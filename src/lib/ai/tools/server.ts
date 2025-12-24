@@ -1,5 +1,4 @@
 
-import { trpcClient } from "@/integrations/tanstack-query/root-provider";
 import {
     getAllLoansDef,
     getLoanDetailsDef,
@@ -10,146 +9,112 @@ import {
     getUserInfoDef,
 } from "@/lib/ai/tools/definitions";
 import { env } from "@/lib/env.server";
+import { createCallerFactory, createTRPCContext } from "@/integrations/trpc/init";
+import { trpcRouter } from "@/server/router";
 
-// --- User & Project Tools ---
+// Create a caller factory for direct server-side calls
+const createCaller = createCallerFactory(trpcRouter);
 
-export const getUserInfo = getUserInfoDef.server(async () => {
-    const profile = await trpcClient.user.getProfile.query();
-    return { user: profile.user || null };
-})
+export async function createAuthenticatedTools(request: Request) {
+    // Create tRPC context with the original request headers (includes auth cookies)
+    const context = await createTRPCContext({
+        headers: request.headers,
+        req: request,
+    });
 
-export const getProjects = getProjectsDef.server(async ({ projectType, searchQuery }) => {
-    let result;
-    if (projectType) {
-        result = await trpcClient.project.getByType.query({ projectType });
-    } else {
-        result = await trpcClient.project.getAll.query();
-    }
+    // Create a caller that uses this authenticated context
+    const caller = createCaller(context);
 
-    let allProjects = [...result.owned, ...result.member];
+    // --- User & Project Tools ---
+    const getUserInfo = getUserInfoDef.server(async () => {
+        const profile = await caller.user.getProfile();
+        return { user: profile.user || null };
+    });
 
-    if (searchQuery) {
-        const query = searchQuery.toLowerCase();
-        allProjects = allProjects.filter(p =>
-            p.title.toLowerCase().includes(query) ||
-            (p.description && p.description.toLowerCase().includes(query))
-        );
-    }
+    const getProjects = getProjectsDef.server(async ({ projectType, searchQuery }) => {
+        let result;
+        if (projectType) {
+            result = await caller.project.getByType({ projectType });
+        } else {
+            result = await caller.project.getAll();
+        }
+
+        let allProjects = [...result.owned, ...result.member];
+
+        if (searchQuery) {
+            const query = searchQuery.toLowerCase();
+            allProjects = allProjects.filter(p =>
+                p.title.toLowerCase().includes(query) ||
+                (p.description && p.description.toLowerCase().includes(query))
+            );
+        }
+
+        return {
+            projects: allProjects,
+            createProjectLink: `${env.SERVER_URL}/dashboard/projects`
+        };
+    });
+
+    // --- Loan Tools ---
+    const getLoanData = getAllLoansDef.server(async () => {
+        const loans = await caller.loan.getForUser();
+        return {
+            loans: loans.map(loan => ({
+                ...loan,
+                contactEmail: loan.contactEmail ?? undefined,
+                attachments: loan.attachments ? (loan.attachments as any[]) : undefined,
+            }))
+        };
+    });
+
+    const getLoanDetails = getLoanDetailsDef.server(async ({ contactName }) => {
+        const loans = await caller.loan.getAll();
+        const loan = loans.find(l => l.contactName.toLowerCase() === contactName.toLowerCase());
+        if (!loan) {
+            throw new Error(`No loan found for contact: ${contactName}`);
+        }
+        return {
+            loan: {
+                ...loan,
+                contactEmail: loan.contactEmail ?? undefined,
+                attachments: loan.attachments ? (loan.attachments as any[]) : undefined,
+            },
+            loanPageLink: `${env.SERVER_URL}/dashboard/loan/${loan.projectId}/single/${loan.id}`
+        };
+    });
+
+    // --- Splitwise Tools ---
+    const getSplitwiseExpenses = getSplitwiseExpensesDef.server(async ({ projectId }) => {
+        const expenses = await caller.splitwise.getExpenses({ projectId });
+        return {
+            expenses,
+            splitwiseLink: `${env.SERVER_URL}/dashboard/splitwise/${projectId}`
+        };
+    });
+
+    const getSplitwiseBalances = getSplitwiseBalancesDef.server(async ({ projectId }) => {
+        const balances = await caller.splitwise.getBalances({ projectId });
+        return {
+            balances,
+            splitwiseLink: `${env.SERVER_URL}/dashboard/splitwise/${projectId}`
+        };
+    });
+
+    const getSplitwiseSettlements = getSplitwiseSettlementsDef.server(async ({ projectId }) => {
+        const settlements = await caller.splitwise.getSettlements({ projectId });
+        return {
+            settlements,
+            splitwiseLink: `${env.SERVER_URL}/dashboard/splitwise/${projectId}`
+        };
+    });
 
     return {
-        projects: allProjects,
-        createProjectLink: `${env.SERVER_URL}/dashboard/projects`
+        getUserInfo,
+        getProjects,
+        getLoanData,
+        getLoanDetails,
+        getSplitwiseExpenses,
+        getSplitwiseBalances,
+        getSplitwiseSettlements,
     };
-})
-
-// --- Loan Tools ---
-
-export const getLoanData = getAllLoansDef.server(async () => {
-    const loans = await trpcClient.loan.getForUser.query();
-    return {
-        loans: loans.map(loan => ({
-            ...loan,
-            contactEmail: loan.contactEmail ?? undefined,
-            attachments: loan.attachments ? (loan.attachments as any[]) : undefined,
-        }))
-    };
-})
-
-export const getLoanDetails = getLoanDetailsDef.server(async ({ contactName }) => {
-    const loans = await trpcClient.loan.getAll.query();
-    const loan = loans.find(l => l.contactName.toLowerCase() === contactName.toLowerCase());
-    if (!loan) {
-        throw new Error(`No loan found for contact: ${contactName}`);
-    }
-    return {
-        loan: {
-            ...loan,
-            contactEmail: loan.contactEmail ?? undefined,
-            attachments: loan.attachments ? (loan.attachments as any[]) : undefined,
-        },
-        loanPageLink: `${env.SERVER_URL}/dashboard/loan/${loan.projectId}/single/${loan.id}`
-    };
-})
-
-// export const createLoan = createLoanDef.server(async (input) => {
-//     try {
-//         const result = await trpcClient.loan.create.mutate(input);
-//         return {
-//             success: result.success,
-//             loan: result.loan,
-//             message: result.success ? 'Loan created successfully' : 'Failed to create loan'
-//         };
-//     } catch (error: any) {
-//         return { success: false, message: error.message || 'I cannot provide information at this time.' };
-//     }
-// })
-
-// export const recordLoanPayment = recordLoanPaymentDef.server(async (input) => {
-//     try {
-//         const result = await trpcClient.loan.addPayment.mutate(input);
-//         return {
-//             success: result.success,
-//             payment: result.payment,
-//             message: result.success ? 'Payment recorded successfully' : 'Failed to record payment'
-//         };
-//     } catch (error: any) {
-//         return { success: false, message: error.message || 'I cannot provide information at this time.' };
-//     }
-// })
-
-// --- Splitwise Tools ---
-
-export const getSplitwiseExpenses = getSplitwiseExpensesDef.server(async ({ projectId }) => {
-    const expenses = await trpcClient.splitwise.getExpenses.query({ projectId });
-    return {
-        expenses,
-        splitwiseLink: `${env.SERVER_URL}/dashboard/splitwise/${projectId}`
-    };
-})
-
-export const getSplitwiseBalances = getSplitwiseBalancesDef.server(async ({ projectId }) => {
-    const balances = await trpcClient.splitwise.getBalances.query({ projectId });
-    return {
-        balances,
-        splitwiseLink: `${env.SERVER_URL}/dashboard/splitwise/${projectId}`
-    };
-})
-
-export const getSplitwiseSettlements = getSplitwiseSettlementsDef.server(async ({ projectId }) => {
-    const settlements = await trpcClient.splitwise.getSettlements.query({ projectId });
-    return {
-        settlements,
-        splitwiseLink: `${env.SERVER_URL}/dashboard/splitwise/${projectId}`
-    };
-})
-
-// export const createSplitwiseExpense = createSplitwiseExpenseDef.server(async (input) => {
-//     try {
-//         const expense = await trpcClient.splitwise.createExpense.mutate({
-//             ...input,
-//             date: new Date(input.date)
-//         });
-//         return {
-//             success: true,
-//             expense,
-//             message: 'Expense created successfully'
-//         };
-//     } catch (error: any) {
-//         return { success: false, message: error.message || 'I cannot provide information at this time.' };
-//     }
-// })
-
-// export const settleUpSplitwise = settleUpSplitwiseDef.server(async (input) => {
-//     try {
-//         await trpcClient.splitwise.settleUp.mutate({
-//             ...input,
-//             date: new Date(input.date)
-//         });
-//         return {
-//             success: true,
-//             message: 'Settlement recorded successfully'
-//         };
-//     } catch (error: any) {
-//         return { success: false, message: error.message || 'I cannot provide information at this time.' };
-//     }
-// })
+}

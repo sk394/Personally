@@ -129,7 +129,6 @@ export function TextField({
           onBlur={field.handleBlur}
           onChange={(e) => field.handleChange(e.target.value)}
           autoComplete="off"
-          autoFocus
           className={className}
         />
         {placeholderIcon && (
@@ -177,7 +176,6 @@ export function NumberField({
             field.handleChange(v === '' ? '' : Number(v))
           }}
           autoComplete="off"
-          autoFocus
           className="text-base h-10"
         />
         {children}
@@ -325,12 +323,14 @@ export function DateField({
             )}
           </div>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0 overflow-hidden" align="center" collisionPadding={0} avoidCollisions={false}>
+        <PopoverContent className="w-auto p-0 overflow-hidden z-1000" align="center" collisionPadding={0} >
           <Calendar
             mode="single"
             selected={
               field.state.value ? new Date(field.state.value) : undefined
             }
+            fixedWeeks
+            showOutsideDays
             onSelect={(date) => field.handleChange(date ?? undefined)}
             autoFocus
           />
@@ -640,6 +640,7 @@ export function ChoiceCardField({
                 ? 'grid grid-cols-1 sm:grid-cols-2 gap-4'
                 : 'flex flex-col gap-2',
             )}
+            autoFocus={false}
           >
             {options.map((option) => {
               const isSelected = field.state.value === option.value

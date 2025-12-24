@@ -143,14 +143,6 @@ export function CreateNewLoanDialog({
   // Footer buttons - shared between Dialog and Drawer
   const footerButtons = !isComplete && (
     <>
-      <Button
-        type="button"
-        variant="outline"
-        onClick={handleClose}
-        disabled={createLoanMutation.isPending}
-      >
-        Cancel
-      </Button>
 
       <Button
         onClick={(e) => {
@@ -173,6 +165,14 @@ export function CreateNewLoanDialog({
             Create Loan
           </>
         )}
+      </Button>
+      <Button
+        type="button"
+        variant="outline"
+        onClick={handleClose}
+        disabled={createLoanMutation.isPending}
+      >
+        Cancel
       </Button>
     </>
   )
@@ -214,8 +214,8 @@ export function CreateNewLoanDialog({
 
   // Mobile: Drawer
   return (
-    <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="max-h-[90vh]">
+    <Drawer open={open} onOpenChange={onOpenChange} autoFocus={false} direction="top" dismissible={false}>
+      <DrawerContent className="fixed h-[100dvh] min-h-[90dvh] w-full z-1000">
         <div className="w-full max-w-sm">
           <DrawerHeader className="flex flex-col text-left float-left">
             <div className="flex items-center gap-2">
@@ -227,7 +227,7 @@ export function CreateNewLoanDialog({
             </DrawerDescription>
           </DrawerHeader>
         </div>
-        <div className="px-2 pb-4 overflow-y-auto max-h-[60vh]">
+        <div className="flex-1 px-4 pb-4 overflow-y-auto">
           {formContent}
         </div>
 

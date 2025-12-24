@@ -148,7 +148,7 @@ export const LoanForm = withForm({
                         placeholder="Enter amount"
                         children={
                           <InputGroupAddon align="inline-end">
-                            <InputGroupText>USD</InputGroupText>
+                            <InputGroupText autoFocus={false}>USD</InputGroupText>
                           </InputGroupAddon>
                         }
                       />
@@ -169,7 +169,7 @@ export const LoanForm = withForm({
                           placeholder="Rate (e.g. 0.05)"
                           children={
                             <InputGroupAddon align="inline-end">
-                              <InputGroupText>%</InputGroupText>
+                              <InputGroupText autoFocus={false}>%</InputGroupText>
                             </InputGroupAddon>
                           }
                         />

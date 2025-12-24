@@ -70,7 +70,7 @@ export function CreateNewProjectDialog({
   const form = useAppForm({
     ...projectOpts,
     validators: {
-      onChange: projectSchema,
+      onSubmit: projectSchema,
     },
     onSubmit: async ({ value }) => {
       await createProjectMutation.mutateAsync({
@@ -109,10 +109,8 @@ export function CreateNewProjectDialog({
   }
 
   const handleClose = () => {
-    if (!createProjectMutation.isPending && !isComplete) {
-      onOpenChange(false)
-      setTimeout(resetForm, 300)
-    }
+    onOpenChange(false)
+    setTimeout(resetForm, 300)
   }
 
   // Form content - shared between Dialog and Drawer
@@ -145,17 +143,7 @@ export function CreateNewProjectDialog({
     <>
       <Button
         type="button"
-        variant="outline"
-        onClick={handleClose}
-        disabled={createProjectMutation.isPending}
-      >
-        Cancel
-      </Button>
-
-      <Button
-        type="button"
         onClick={(e) => {
-          e.preventDefault()
           e.stopPropagation()
           form.handleSubmit()
         }}
@@ -174,6 +162,14 @@ export function CreateNewProjectDialog({
             Create Project
           </>
         )}
+      </Button>
+      <Button
+        type="button"
+        variant="outline"
+        onClick={handleClose}
+      //disabled={createProjectMutation.isPending}
+      >
+        Cancel
       </Button>
     </>
   )
@@ -215,27 +211,24 @@ export function CreateNewProjectDialog({
 
   // Mobile: Drawer
   return (
-    <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="max-h-[95vh] ">
-        <div className="w-full max-w-sm">
-          <DrawerHeader className="flex text-left float-left">
+    <Drawer open={open} onOpenChange={onOpenChange} direction="top" autoFocus={false} dismissible={false}>
+      <DrawerContent className="h-[100dvh] min-h-[100dvh] w-full">
+        <div className="flex flex-col h-full w-full">
+          <DrawerHeader className="text-left">
             <div className="flex items-center gap-2">
               <Sparkles className="size-6 text-indigo-500" />
               <DrawerTitle>Create New Project</DrawerTitle>
             </div>
-            <DrawerDescription className="ml-8">
-              Fill in the details below.
-            </DrawerDescription>
           </DrawerHeader>
-        </div>
 
-        <div className="px-4 pb-4 overflow-y-auto max-h-[60vh]">
-          {formContent}
-        </div>
+          <div className="flex-1 px-4 pb-4 overflow-y-auto">
+            {formContent}
+          </div>
 
-        <DrawerFooter>
-          {footerButtons}
-        </DrawerFooter>
+          <DrawerFooter>
+            {footerButtons}
+          </DrawerFooter>
+        </div>
       </DrawerContent>
     </Drawer>
   )

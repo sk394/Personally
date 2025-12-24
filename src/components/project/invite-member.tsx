@@ -152,12 +152,6 @@ export function InviteMemberComponent({
                                                             onChange={(e) => field.handleChange(e.target.value)}
                                                             disabled={inviteMutation.isPending}
                                                         />
-                                                        {field.state.meta.errors && (
-                                                            <p className="text-sm text-red-500 mt-1 flex items-center gap-1">
-                                                                <AlertCircle className="size-3" />
-                                                                {field.state.meta.errors.join(', ')}
-                                                            </p>
-                                                        )}
                                                     </>
                                                 )}
                                             </form.Field>
@@ -183,12 +177,6 @@ export function InviteMemberComponent({
                                                         onChange={(e) => field.handleChange(e.target.value)}
                                                         disabled={inviteMutation.isPending}
                                                     />
-                                                    {field.state.meta.errors && (
-                                                        <p className="text-sm text-red-500 mt-1 flex items-center gap-1">
-                                                            <AlertCircle className="size-3" />
-                                                            {field.state.meta.errors.join(', ')}
-                                                        </p>
-                                                    )}
                                                 </>
                                             )}
                                         </form.Field>
@@ -204,7 +192,7 @@ export function InviteMemberComponent({
                                     >
                                         Cancel
                                     </Button>
-                                    <Button type="submit" disabled={inviteMutation.isPending}>
+                                    <Button type="submit" disabled={inviteMutation.isPending || form.state.errors.length > 0}>
                                         {inviteMutation.isPending ? (
                                             <>
                                                 <Loader2 className="size-4 animate-spin" />

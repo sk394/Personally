@@ -155,30 +155,6 @@ export function CreateExpenseDialog({
       }}
       className="space-y-4"
     >
-      <form.AppField name="category">
-        {(field) => (
-          <field.SelectField
-            label="Category"
-            placeholder="Select category"
-            values={[
-              { value: 'Grocery', label: 'Grocery' },
-              { value: 'Rent', label: 'Rent' },
-              { value: 'Utilities', label: 'Utilities' },
-              { value: 'Other', label: 'Other' },
-            ]}
-          />
-        )}
-      </form.AppField>
-
-      <form.AppField name="description">
-        {(field) => (
-          <field.PersonallyTextField
-            label="Description"
-            placeholder="Enter description"
-          />
-        )}
-      </form.AppField>
-
       <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
         <form.AppField name="amount">
           {(field) => (
@@ -187,7 +163,7 @@ export function CreateExpenseDialog({
               placeholder="Enter amount"
               required
               children={
-                <InputGroupAddon>
+                <InputGroupAddon autoFocus={false}>
                   <DollarSign className="size-4" />
                 </InputGroupAddon>
               }
@@ -209,6 +185,30 @@ export function CreateExpenseDialog({
           )}
         </form.AppField>
       </div>
+      <form.AppField name="category">
+        {(field) => (
+          <field.SelectField
+            label="Category"
+            placeholder="Select category"
+            values={[
+              { value: 'Grocery', label: 'Grocery' },
+              { value: 'Rent', label: 'Rent' },
+              { value: 'Utilities', label: 'Utilities' },
+              { value: 'Other', label: 'Other' },
+            ]}
+          />
+        )}
+      </form.AppField>
+
+      <form.AppField name="description">
+        {(field) => (
+          <field.PersonallyTextArea
+            label="Place of Expense"
+            placeholder="Enter description"
+            rows={2}
+          />
+        )}
+      </form.AppField>
 
       <form.AppField name="date">
         {(field) => (
@@ -220,7 +220,7 @@ export function CreateExpenseDialog({
         )}
       </form.AppField>
 
-      <div className="flex justify-end border-t border-zinc-200 dark:border-zinc-800 gap-2 py-2 sm:w-full">
+      <div className="flex justify-start border-t border-zinc-200 dark:border-zinc-800 gap-2 py-2 sm:w-full">
         <Button
           type="button"
           variant="outline"
@@ -285,7 +285,7 @@ export function CreateExpenseDialog({
   // Mobile: Drawer
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="max-h-[90vh]">
+      <DrawerContent className="max-w-lg max-h-[90dvh]">
         <div className="w-full max-w-sm">
           <DrawerHeader className="flex text-left float-left">
             <div className="flex items-center gap-2">
@@ -297,7 +297,7 @@ export function CreateExpenseDialog({
             </DrawerDescription>
           </DrawerHeader>
         </div>
-        <div className="px-4 pb-4 overflow-y-auto max-h-[60vh]">
+        <div className="flex-1 px-4 pb-4 pb-safe overflow-y-auto">
           {formContent}
         </div>
       </DrawerContent>

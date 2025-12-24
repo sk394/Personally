@@ -1,0 +1,47 @@
+src/components/Header.tsx(79,13): error TS2322: Type '"/demo/start/server-funcs"' is not assignable to type '"/signin" | "/verify-email" | "/dashboard" | "/" | "." | ".." | "/signup" | "/api/chat" | "/api/auth/$" | "/api/trpc/$" | "/dashboard/splitwise/$projectId" | "/dashboard/expense" | ... 6 more ... | "/dashboard/loan/$projectId/single/$loanId"'.
+src/components/Header.tsx(92,13): error TS2322: Type '"/demo/start/api-request"' is not assignable to type '"/signin" | "/verify-email" | "/dashboard" | "/" | "." | ".." | "/signup" | "/api/chat" | "/api/auth/$" | "/api/trpc/$" | "/dashboard/splitwise/$projectId" | "/dashboard/expense" | ... 6 more ... | "/dashboard/loan/$projectId/single/$loanId"'.
+src/components/Header.tsx(106,15): error TS2322: Type '"/demo/start/ssr"' is not assignable to type '"/signin" | "/verify-email" | "/dashboard" | "/" | "." | ".." | "/signup" | "/api/chat" | "/api/auth/$" | "/api/trpc/$" | "/dashboard/splitwise/$projectId" | "/dashboard/expense" | ... 6 more ... | "/dashboard/loan/$projectId/single/$loanId"'.
+src/components/Header.tsx(136,17): error TS2322: Type '"/demo/start/ssr/spa-mode"' is not assignable to type '"/signin" | "/verify-email" | "/dashboard" | "/" | "." | ".." | "/signup" | "/api/chat" | "/api/auth/$" | "/api/trpc/$" | "/dashboard/splitwise/$projectId" | "/dashboard/expense" | ... 6 more ... | "/dashboard/loan/$projectId/single/$loanId"'.
+src/components/Header.tsx(149,17): error TS2322: Type '"/demo/start/ssr/full-ssr"' is not assignable to type '"/signin" | "/verify-email" | "/dashboard" | "/" | "." | ".." | "/signup" | "/api/chat" | "/api/auth/$" | "/api/trpc/$" | "/dashboard/splitwise/$projectId" | "/dashboard/expense" | ... 6 more ... | "/dashboard/loan/$projectId/single/$loanId"'.
+src/components/Header.tsx(162,17): error TS2322: Type '"/demo/start/ssr/data-only"' is not assignable to type '"/signin" | "/verify-email" | "/dashboard" | "/" | "." | ".." | "/signup" | "/api/chat" | "/api/auth/$" | "/api/trpc/$" | "/dashboard/splitwise/$projectId" | "/dashboard/expense" | ... 6 more ... | "/dashboard/loan/$projectId/single/$loanId"'.
+src/components/Header.tsx(177,13): error TS2322: Type '"/demo/neon"' is not assignable to type '"/signin" | "/verify-email" | "/dashboard" | "/" | "." | ".." | "/signup" | "/api/chat" | "/api/auth/$" | "/api/trpc/$" | "/dashboard/splitwise/$projectId" | "/dashboard/expense" | ... 6 more ... | "/dashboard/loan/$projectId/single/$loanId"'.
+src/components/Header.tsx(190,13): error TS2322: Type '"/demo/sentry/testing"' is not assignable to type '"/signin" | "/verify-email" | "/dashboard" | "/" | "." | ".." | "/signup" | "/api/chat" | "/api/auth/$" | "/api/trpc/$" | "/dashboard/splitwise/$projectId" | "/dashboard/expense" | ... 6 more ... | "/dashboard/loan/$projectId/single/$loanId"'.
+src/components/Header.tsx(203,13): error TS2322: Type '"/demo/form/simple"' is not assignable to type '"/signin" | "/verify-email" | "/dashboard" | "/" | "." | ".." | "/signup" | "/api/chat" | "/api/auth/$" | "/api/trpc/$" | "/dashboard/splitwise/$projectId" | "/dashboard/expense" | ... 6 more ... | "/dashboard/loan/$projectId/single/$loanId"'.
+src/components/Header.tsx(216,13): error TS2322: Type '"/demo/form/address"' is not assignable to type '"/signin" | "/verify-email" | "/dashboard" | "/" | "." | ".." | "/signup" | "/api/chat" | "/api/auth/$" | "/api/trpc/$" | "/dashboard/splitwise/$projectId" | "/dashboard/expense" | ... 6 more ... | "/dashboard/loan/$projectId/single/$loanId"'.
+src/components/Header.tsx(229,13): error TS2322: Type '"/demo/table"' is not assignable to type '"/signin" | "/verify-email" | "/dashboard" | "/" | "." | ".." | "/signup" | "/api/chat" | "/api/auth/$" | "/api/trpc/$" | "/dashboard/splitwise/$projectId" | "/dashboard/expense" | ... 6 more ... | "/dashboard/loan/$projectId/single/$loanId"'.
+src/components/Header.tsx(242,13): error TS2322: Type '"/demo/trpc-todo"' is not assignable to type '"/signin" | "/verify-email" | "/dashboard" | "/" | "." | ".." | "/signup" | "/api/chat" | "/api/auth/$" | "/api/trpc/$" | "/dashboard/splitwise/$projectId" | "/dashboard/expense" | ... 6 more ... | "/dashboard/loan/$projectId/single/$loanId"'.
+src/components/Header.tsx(255,13): error TS2322: Type '"/demo/tanstack-query"' is not assignable to type '"/signin" | "/verify-email" | "/dashboard" | "/" | "." | ".." | "/signup" | "/api/chat" | "/api/auth/$" | "/api/trpc/$" | "/dashboard/splitwise/$projectId" | "/dashboard/expense" | ... 6 more ... | "/dashboard/loan/$projectId/single/$loanId"'.
+src/components/landing-chat.tsx(15,11): error TS6133: 'navigate' is declared but its value is never read.
+src/components/project/project-navigation.tsx(5,37): error TS6133: 'ExternalLink' is declared but its value is never read.
+src/components/ui/chart.tsx(108,3): error TS2339: Property 'payload' does not exist on type 'Omit<Props<ValueType, NameType>, PropertiesReadFromContext> & { active?: boolean | undefined; allowEscapeViewBox?: AllowInDimension | undefined; ... 17 more ...; wrapperStyle?: CSSProperties | undefined; } & ClassAttributes<...> & HTMLAttributes<...> & { ...; }'.
+src/components/ui/chart.tsx(113,3): error TS2339: Property 'label' does not exist on type 'Omit<Props<ValueType, NameType>, PropertiesReadFromContext> & { active?: boolean | undefined; allowEscapeViewBox?: AllowInDimension | undefined; ... 17 more ...; wrapperStyle?: CSSProperties | undefined; } & ClassAttributes<...> & HTMLAttributes<...> & { ...; }'.
+src/components/ui/chart.tsx(181,23): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/components/ui/chart.tsx(181,29): error TS7006: Parameter 'index' implicitly has an 'any' type.
+src/components/ui/chart.tsx(259,39): error TS2344: Type '"verticalAlign" | "payload"' does not satisfy the constraint '"string" | "transform" | "filter" | "fill" | "values" | "method" | "type" | "key" | "id" | "name" | "operator" | "local" | "path" | "to" | "from" | "children" | "suppressHydrationWarning" | ... 429 more ... | "onBBoxUpdate"'.
+  Type '"payload"' is not assignable to type '"string" | "transform" | "filter" | "fill" | "values" | "method" | "type" | "key" | "id" | "name" | "operator" | "local" | "path" | "to" | "from" | "children" | "suppressHydrationWarning" | ... 429 more ... | "onBBoxUpdate"'.
+src/components/ui/chart.tsx(265,17): error TS2339: Property 'length' does not exist on type '{}'.
+src/components/ui/chart.tsx(277,16): error TS2339: Property 'map' does not exist on type '{}'.
+src/components/ui/chart.tsx(277,21): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/components/ui/collapsible.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+src/components/ui/hover-button-gradient.tsx(2,38): error TS6133: 'useRef' is declared but its value is never read.
+src/components/ui/hover-button-gradient.tsx(60,28): error TS6133: 'event' is declared but its value is never read.
+src/features/loan/payment-chart.tsx(500,5): error TS6133: 'type' is declared but its value is never read.
+src/features/loan/payment-chart.tsx(504,28): error TS6133: 'setSelectedPeriod' is declared but its value is never read.
+src/features/loan/payment-dialog.tsx(4,24): error TS6133: 'DollarSign' is declared but its value is never read.
+src/features/loan/payment-dialog.tsx(10,5): error TS6133: 'DialogDescription' is declared but its value is never read.
+src/features/loan/payment-dialog.tsx(20,18): error TS6133: 'DrawerClose' is declared but its value is never read.
+src/features/loan/payment-dialog.tsx(20,46): error TS6133: 'DrawerDescription' is declared but its value is never read.
+src/features/project/project-form.tsx(3,1): error TS6133: 'useState' is declared but its value is never read.
+src/features/splitwise/create-expense-dialog.tsx(4,36): error TS6133: 'Loader2' is declared but its value is never read.
+src/features/splitwise/create-expense-dialog.tsx(4,54): error TS6133: 'Users' is declared but its value is never read.
+src/features/splitwise/create-expense-dialog.tsx(15,3): error TS6133: 'DialogFooter' is declared but its value is never read.
+src/features/splitwise/create-expense-dialog.tsx(23,3): error TS6133: 'DrawerFooter' is declared but its value is never read.
+src/lib/ai/tools/definitions.ts(1,78): error TS6133: 'insertLoanSchema' is declared but its value is never read.
+src/lib/db/schema/project.ts(5,3): error TS6133: 'jsonb' is declared but its value is never read.
+src/routes/__root.tsx(7,1): error TS6133: 'TanStackRouterDevtoolsPanel' is declared but its value is never read.
+src/routes/__root.tsx(8,1): error TS6133: 'TanStackDevtools' is declared but its value is never read.
+src/routes/__root.tsx(9,1): error TS6133: 'aiDevtoolsPlugin' is declared but its value is never read.
+src/routes/__root.tsx(12,1): error TS6133: 'TanStackQueryDevtools' is declared but its value is never read.
+src/routes/dashboard/index.tsx(1,27): error TS6133: 'redirect' is declared but its value is never read.
+src/server/routes/project.ts(53,21): error TS6133: 'ctx' is declared but its value is never read.
+src/server/routes/splitwise.ts(357,13): error TS6133: 'userId' is declared but its value is never read.

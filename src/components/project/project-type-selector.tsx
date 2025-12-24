@@ -14,6 +14,7 @@ interface ProjectTypeSelectorProps {
   selectedType?: ProjectTypeOption['type']
   onTypeSelect: (type: ProjectTypeOption['type']) => void
   className?: string
+  autoFocus?: boolean
 }
 
 const projectTypeOptions: Array<ProjectTypeOption> = [
@@ -29,18 +30,19 @@ const projectTypeOptions: Array<ProjectTypeOption> = [
     description: 'Split bills and expenses fairly among group members',
     icon: <Users className="size-6" />,
   },
-  {
-    type: 'general',
-    name: 'General Project',
-    description: 'A flexible project for any financial tracking needs',
-    icon: <FolderOpen className="size-6" />,
-  },
+  // {
+  //   type: 'general',
+  //   name: 'General Project',
+  //   description: 'A flexible project for any financial tracking needs',
+  //   icon: <FolderOpen className="size-6" />,
+  // },
 ]
 
 export function ProjectTypeSelector({
   selectedType,
   onTypeSelect,
   className,
+  autoFocus,
 }: ProjectTypeSelectorProps) {
   return (
     <div className={cn('space-y-3', className)}>
@@ -58,6 +60,7 @@ export function ProjectTypeSelector({
           )}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
+          autoFocus={autoFocus}
         >
           <div className="flex items-start gap-4">
             <div

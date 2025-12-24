@@ -73,13 +73,13 @@ export default function ChatInput({
                     }}
                 />
 
-                <div className="px-3 pt-3 pb-2 grow">
+                <div className="px-2.5 sm:px-3 pt-2.5 sm:pt-3 pb-1.5 sm:pb-2 grow">
                     <form onSubmit={handleSubmit}>
                         <Textarea
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
                             placeholder="Ask anything"
-                            className="w-full bg-transparent! p-0 border-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground placeholder-muted-foreground resize-none border-none outline-none text-sm min-h-10 max-h-[25vh]"
+                            className="w-full bg-transparent! p-0 border-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground placeholder-muted-foreground resize-none border-none outline-none text-xs sm:text-sm min-h-8 sm:min-h-10 max-h-[25vh]"
                             rows={1}
                             onInput={(e) => {
                                 const target = e.target as HTMLTextAreaElement;
@@ -96,8 +96,8 @@ export default function ChatInput({
                     </form>
                 </div>
 
-                <div className="mb-2 px-2 flex items-center justify-between">
-                    <div className="flex items-center gap-1">
+                <div className="mb-1.5 sm:mb-2 px-1.5 sm:px-2 flex items-center justify-between">
+                    <div className="flex items-center gap-0.5 sm:gap-1">
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button
@@ -197,17 +197,17 @@ export default function ChatInput({
                 </div>
             </div>
 
-            <div className="flex items-center gap-0 pt-2">
+            <div className="flex items-center flex-wrap gap-0 pt-1.5 sm:pt-2">
                 <div>
                     <Link to="/dashboard/projects">
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="h-6 px-2 rounded-full border border-transparent hover:bg-accent text-muted-foreground text-xs"
+                            className="h-5 sm:h-6 px-1.5 sm:px-2 rounded-full border border-transparent hover:bg-accent text-muted-foreground text-[10px] sm:text-xs"
                         >
-                            <Folders className="size-3" />
+                            <Folders className="size-2.5 sm:size-3" />
                             <span>Projects</span>
-                            <ChevronRight className="size-3" />
+                            <ChevronRight className="size-2.5 sm:size-3" />
                         </Button>
                     </Link>
                 </div>
@@ -215,12 +215,12 @@ export default function ChatInput({
                     <Button
                         variant="ghost"
                         size="sm"
-                        className="h-6 px-2 rounded-full border border-transparent hover:bg-accent text-muted-foreground text-xs"
+                        className="h-5 sm:h-6 px-1.5 sm:px-2 rounded-full border border-transparent hover:bg-accent text-muted-foreground text-[10px] sm:text-xs"
                         onClick={() => setNewProjectOpen(true)}
                     >
-                        <Laptop className="size-3" />
+                        <Laptop className="size-2.5 sm:size-3" />
                         <span>New Project</span>
-                        <ChevronRight className="size-3" />
+                        <ChevronRight className="size-2.5 sm:size-3" />
                     </Button>
                 </div>
 
@@ -229,11 +229,11 @@ export default function ChatInput({
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="h-6 px-2 rounded-full border border-transparent hover:bg-accent text-muted-foreground text-xs"
+                            className="h-5 sm:h-6 px-1.5 sm:px-2 rounded-full border border-transparent hover:bg-accent text-muted-foreground text-[10px] sm:text-xs"
                         >
-                            <User className="size-3" />
+                            <User className="size-2.5 sm:size-3" />
                             <span>{selectedAgent}</span>
-                            <ChevronDown className="size-3" />
+                            <ChevronDown className="size-2.5 sm:size-3" />
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent

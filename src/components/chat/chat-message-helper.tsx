@@ -9,15 +9,15 @@ export function MessageBubble({ message, isStreaming }: { message: UIMessage, is
             className={`flex flex-col ${message.role === "assistant" ? "items-start" : "items-end"
                 }`}
         >
-            <div className={`max-w-[85%] rounded-2xl px-4 py-3 ${message.role === "assistant"
+            <div className={`max-w-[90%] sm:max-w-[85%] rounded-xl sm:rounded-2xl px-2.5 sm:px-4 py-2 sm:py-3 ${message.role === "assistant"
                 ? "bg-gray-100 text-gray-800"
                 : "bg-blue-600 text-white"
                 }`}>
-                <div className="text-xs font-bold mb-1 opacity-50 uppercase tracking-wider">
+                <div className="text-[10px] sm:text-xs font-bold mb-0.5 sm:mb-1 opacity-50 uppercase tracking-wider">
                     {message.role === "assistant" ? "Assistant" : "You"}
                 </div>
                 {isStreaming ? <TypingIndicator /> : null}
-                <div className="prose prose-sm max-w-none dark:prose-invert">
+                <div className="prose prose-xs sm:prose-sm max-w-none dark:prose-invert text-xs sm:text-sm">
                     {message.parts.map((part, idx) => {
                         if (part.type === "thinking") {
                             return (
